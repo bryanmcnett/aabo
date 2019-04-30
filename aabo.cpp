@@ -197,7 +197,7 @@ int main(int argc, char* argv[])
     printf("AABB reported %d intersections in %f seconds\n", intersections, seconds);
   }
   
-  // test how fast AABT is for kObjects * kObjects tests
+  // test how fast AABO is for kObjects * kObjects tests
   {
     const Clock clock;
     int intersections = 0;
@@ -226,7 +226,7 @@ int main(int argc, char* argv[])
     }
     const float seconds = clock.seconds();
     
-    printf("AABT reported %d intersections in %f seconds\n", intersections, seconds);
+    printf("AABO reported %d intersections in %f seconds\n", intersections, seconds);
   }
   return 0;
 }
