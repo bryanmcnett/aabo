@@ -1,1 +1,1 @@
-g++ aabt.cpp -Ofast -march=native
+g++ aabo.cpp -Ofast -march=native
