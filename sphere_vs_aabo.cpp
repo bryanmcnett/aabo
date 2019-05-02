@@ -248,14 +248,9 @@ int main(int argc, char* argv[])
         const BoundingSphere target = boundingSphere[t];
 	const float4 sub = probe - target;
 	const float4 add = probe + target;
-	const float4 subSquared = sub * sub;
-	const float4 addSquared = add * add;
-	const __m128 xxxx = _mm_shuffle_ps(subSquared.abcd, subSquared.abcd, _MM_SHUFFLE(0,0,0,0));
-	const __m128 yyyy = _mm_shuffle_ps(subSquared.abcd, subSquared.abcd, _MM_SHUFFLE(1,1,1,1));
-	const __m128 zzzz = _mm_shuffle_ps(subSquared.abcd, subSquared.abcd, _MM_SHUFFLE(2,2,2,2));
-	const __m128 squaredDistance        = _mm_add_ps(xxxx, _mm_add_ps(yyyy, zzzz));
-	const __m128 squaredMaximumDistance = _mm_shuffle_ps(addSquared.abcd, addSquared.abcd, _MM_SHUFFLE(3,3,3,3));
-	if(_mm_movemask_ps(_mm_cmple_ps(squaredDistance, squaredMaximumDistance)) == 0xF)
+	const __m128 squaredDistance = _mm_dp_ps(sub.abcd, sub.abcd, 0x78);
+	const __m128 squaredMaximumDistance = _mm_mul_ps(add.abcd, add.abcd);
+	if(_mm_movemask_ps(_mm_cmple_ps(squaredDistance, squaredMaximumDistance)) & 0x8)
   	  ++intersections;
       }
     }
