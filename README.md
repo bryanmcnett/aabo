@@ -50,7 +50,7 @@ To perform a trivial rejection against a group of (minA, minB, minC) target obje
 
 ![A bounding triangle of maximum axis values](triangle_max.png)
 
-And for each rejection test, if the probe’s maxA < the object’s minA (or B or C), they do not intersect. This is true of the object above and probe to the left.
+And for each rejection test, if the probe’s maxA < the object’s minA (or B or C), they do not intersect. This is true of the two above triangles: they do not intersect.
 
 There is no need for each object to store a (maxA, maxB, maxC) in addition to a (minA, minB, minC) simply to do intersection tests - only the probe needs (maxA, maxB, maxC). So if we stop here, we have a novel bounding volume with roughly the same characteristics as AABB, but 25% cheaper in 2D and 33% cheaper in 3D than AABB.
 
