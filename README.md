@@ -2,7 +2,10 @@ Axis-Aligned Bounding Dual Simplex
 ==================================
 
 ```
-In computer graphics and computational geometry, a bounding volume for a set of objects is a closed volume that completely contains the union of the objects in the set. Bounding volumes are used to improve the efficiency of geometrical operations by using simple volumes to contain more complex objects. Normally, simpler volumes have simpler ways to test for overlap.
+In computer graphics and computational geometry, a bounding volume for a set of objects is a closed volume that 
+completely contains the union of the objects in the set. Bounding volumes are used to improve the efficiency of 
+geometrical operations by using simple volumes to contain more complex objects. Normally, simpler volumes have 
+simpler ways to test for overlap.
 ```
 
 The axis-aligned bounding box and bounding sphere are considered to be the simplest bounding volumes, and therefore are ubiquitous in realtime and large-scale applications.
