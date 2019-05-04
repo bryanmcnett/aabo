@@ -1,3 +1,8 @@
+```
+AABB reported 45333 intersections in 3.073578 seconds
+AABO reported 41848 intersections in 2.297107 seconds
+```
+
 Axis-Aligned Bounding Dual Simplex
 ==================================
 
