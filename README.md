@@ -26,21 +26,31 @@ struct AABB { float minX, minY, maxX, maxY; };
 struct AABT { float minA, minB, minC; };
 ```
 
-
 2D AABB is well-understood. Here is an example of an object and its 2D AABB, where X bounds are red and Y are green:
+
+![A horse enclosed in a 2D AABB](horse_box.png)
 
 2D AABT (axis-aligned bounding triangle) is not as well known. It does not use the X and Y axes - it uses the three axes ABC, which could have the values [X, Y, -X-Y], but for simplicity’s sake let’s say they are at 120 degree angles to each other:
 
+![The ABC axes point at vertices of an equilateral triangle](abc_axes.png)
+
 The points from the horse image above can each be projected onto the ABC axes, and the minimum and maximum values for A, B, and C can be found, just as with AABB and XY:
 
-
+![A horse enclosed in opposing bounding triangles](horse_dual_triangle.png)
+
 Interestingly, however, it is possible to perform an intersection test without looking at both the min and max values, unlike with AABB. Because (minA, minB, minC) form a triangle, we can trivially reject against those three values in isolation, without considering (maxA, maxB, maxC):
 
+![A horse enclosed in opposing bounding triangles](horse_triangle.png)
+
 That is why the data structure for an axis-aligned bounding triangle requires only (minA, minB, minC): it is sufficient to perform trivial intersection rejection tests:
- 
+
+![A bounding triangle of minimum axis values](triangle_min.png)
+
 To perform a trivial rejection against a group of (minA, minB, minC) target objects, your probe object would need to have the form (maxA, maxB, maxC):
 
-And for each rejection test, if the probe’s maxA < the object’s minA (or B or C), they do not intersect. This is true of the object above and probe to the left.
+![A bounding triangle of maximum axis values](triangle_max.png)
+
+And for each rejection test, if the probe’s maxA < the object’s minA (or B or C), they do not intersect. This is true of the two above triangles: they do not intersect.
 
 There is no need for each object to store a (maxA, maxB, maxC) in addition to a (minA, minB, minC) simply to do intersection tests - only the probe needs (maxA, maxB, maxC). So if we stop here, we have a novel bounding volume with roughly the same characteristics as AABB, but 25% cheaper in 2D and 33% cheaper in 3D than AABB.
 
