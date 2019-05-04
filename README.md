@@ -28,7 +28,7 @@ struct AABT { float minA, minB, minC; };
 
 2D AABB is well-understood. Here is an example of an object and its 2D AABB, where X bounds are red and Y are green:
 
-![a horse enclosed in an AABB](horse.png)
+![a horse enclosed in an AABB](horse_aabb.png)
 
 2D AABT (axis-aligned bounding triangle) is not as well known. It does not use the X and Y axes - it uses the three axes ABC, which could have the values [X, Y, -X-Y], but for simplicity’s sake let’s say they are at 120 degree angles to each other:
 
