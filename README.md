@@ -91,6 +91,8 @@ Comparison to k-DOP
 
 Christer Ericson’s book “Real-Time Collision Detection” has the following to say about k-DOP, whose DOP8 is similar to Axis Aligned Bounding Octahedron:
 
+![Christer Ericon's book, talking about k-DOP](kdop.png)
+
 k-DOP is different from the ideas in this paper, in the following ways:
 
 * An Axis-Aligned Bounding Simplex does not have opposing planes, so it is not a k-DOP
