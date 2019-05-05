@@ -79,7 +79,7 @@ However, the hexagon has the nice property that it is made of two independent ax
 
 Therefore, If the minABC is stored in one place and the maxABC is stored somewhere else, a bounding hexagon check is usually as cheap as a bounding triangle check, since the second triangle-triangle test is rarely necessary.
 
-For AABB, no subset of the four checks defines a finite volume, and so if you were to try to do initial trivial rejection with less than four values, you would be checking against a bounding object with infinite volume. This is the essential advantage of AABH.
+For AABB, no subset of the four checks encloses a finite volume, and so if you were to try to do initial trivial rejection with less than four values, the initial bounding object would have infinite volume. This is larger than the volume of an AABH's first triangle. That is the essential advantage of AABH.
 
 A cheap axis-aligned bounding triangle test against minABC can be done first, and only in the unlikely event that an intersection test passes, a subsequent test against maxABC can be done if so desired. In this way, AABH has a larger memory footprint than AABB, but uses less memory bandwidth and computation than AABB.
 
