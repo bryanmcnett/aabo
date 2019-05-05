@@ -128,3 +128,20 @@ AABB has no such problem, and neither does AABT (triangle or tetrahedron.) Their
 
 A bounding sphere can have exactly one shape, but each AABO can be wide and flat, or tall and skinny, or roughly spherical, etc. So, in comparison to an AABO, a bounding sphere may not have very tight bounds. 
 
+The Pragmatic Axes
+------------------
+
+Though axes ABC that point at the vertices of an equilateral triangle are elegant and unbiased:
+
+![Elegant axes for Axis Aligned Bounding Triangle](abc_axes.png)
+
+Transforming between ABC and XY coordinates is costly, and can be avoided by choosing these more pragmatic axes:
+
+```
+A=X
+B=Y
+C=-(X+Y)
+```
+
+![Pragmatic axes for Axis Aligned Bounding Triangle](pragmatic.png)
+
