@@ -165,7 +165,7 @@ If you construct the AABH from the object's vertices instead, you can trivially 
 
 ![Pragmatic axis AABO](images/pragmatic_pre.png)
 
-If it's unclear how AABH can be faster than AABB when doing 3 checks, the image below may help to explain. No matter which 3 checks
-you do with an AABB, the shape you choose for trivial rejection tests has infinite volume, which is much larger than the finite volume enclosed by the first three checks in an AABH. This infinite volume is somewhat less efficient than a finite volume at trivial rejection tests, as there is an infinite amount of space that it fails to enclose.
+If it's unclear how AABH can be faster than AABB when doing 3 checks, the image below may help to explain. Even if you were to do 3
+checks first with an AABB, no matter which 3 checks you chose to do, the shape you chose for trivial rejection tests has infinite volume, which is much larger than the finite volume enclosed by the first three checks in an AABH. This infinite volume is somewhat less efficient than a finite volume at trivial rejection tests, as there is an infinite amount of space that it fails to enclose.
 
 ![Inifinite Volume](images/infinity.png)
