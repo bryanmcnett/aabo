@@ -152,7 +152,7 @@ The pragmatic axes look worse, and are worse, but still make triangles that encl
 {maxX, maxY, -(minX + minY)}
 ```
 
-![Pre-existing AABB to AABO](images/pragmatic_post.png | width=200)
+![Pre-existing AABB to AABO](images/pragmatic_post.png|width=200)
 
 This won't cull any more objects than the original AABB, but it'll take less time because there are (usually) 3 checks instead of 4.
 
@@ -163,4 +163,4 @@ If you construct the AABO from the object's vertices instead, you can cull more 
 {maxX, maxY, -(min(X+Y)}
 ```
 
-![Pragmatic axis AABO](images/pragmatic_pre.png | width=200)
+![Pragmatic axis AABO](images/pragmatic_pre.png|width=200)
