@@ -145,3 +145,4 @@ C=-(X+Y)
 
 ![Pragmatic axes for Axis Aligned Bounding Triangle](pragmatic.png)
 
+The pragmatic axes look worse, and are worse, but still make triangles that enclose objects pretty well, and in practice don't harm performance as much as you'd expect.
