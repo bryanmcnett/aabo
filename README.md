@@ -145,7 +145,7 @@ C=-(X+Y)
 
 ![Pragmatic axes for Axis Aligned Bounding Triangle](images/pragmatic.png)
 
-The pragmatic axes look worse, and are worse, but still make triangles that enclose objects pretty well. With these axes, it is possible to construct an AABH from a pre-existing AABB, that has exactly the same shape as the AABB, and where only 5 checks are necessary for an intersection test:
+The pragmatic axes look worse, and are worse, but still make triangles that enclose objects pretty well. With these axes, it is possible to construct an AABH from a pre-existing AABB, that has exactly the same shape as the AABB, and where the 6th check is unnecessary:
 
 ```
 {minX, minY, -(maxX + maxY)}
