@@ -77,9 +77,9 @@ struct AABH { AABT minABC, maxABC; }; // bounding hexagon
 
 However, the hexagon has the nice property that it is made of two independent axis-aligned bounding triangles (minABC and maxABC), and unless two hexagons are nearly overlapping, a check of one hexagon’s minABC triangle vs the other’s maxABC triangle (or vice versa) is sufficient for initial trivial intersection rejection. 
 
-Therefore, If the minABC is stored in one place and the maxABC is stored somewhere else, a bounding hexagon check is usually as cheap as a bounding triangle check, since the second triangle-triangle test is rarely necessary.
+Therefore, If the minABC is stored in one place and the maxABC is stored somewhere else (in memory, on disk, etc.), a bounding hexagon check is usually as cheap as a bounding triangle check, since the second triangle is rarely read.
 
-For AABB, no subset of the four checks encloses a finite volume, and so if you were to try to do initial trivial rejection with less than four values, the initial bounding object would have infinite volume. This is larger than the finite volume of an AABH's first triangle. That is the essential advantage of AABH.
+For a 2D AABB, no subset of the four checks encloses a finite area, and so if you were to try to do initial trivial rejection with less than four values, the initial bounding object would have infinite area. This is larger than the finite area of an AABH's first triangle. That is the essential advantage of AABH.
 
 A cheap axis-aligned bounding triangle test against minABC can be done first, and only in the unlikely event that an intersection test passes, a subsequent test against maxABC can be done if so desired. In this way, AABH has a larger memory footprint than AABB, but uses less memory bandwidth and computation than AABB.
 
