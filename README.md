@@ -81,7 +81,7 @@ Therefore, If the minABC is stored in one place and the maxABC is stored somewhe
 
 For a 2D AABB, no subset of the four checks encloses a finite area, and so if you were to try to do initial trivial rejection with less than four values, the initial bounding object would have infinite area. This is larger than the finite area of an AABH's first triangle. That is the essential advantage of AABH.
 
-A cheap axis-aligned bounding triangle test against minABC can be done first, and only in the unlikely event that an intersection test passes, a subsequent test against maxABC can be done if so desired. In this way, AABH has a larger memory footprint than AABB, but uses less memory bandwidth and computation than AABB.
+AABH has a larger memory footprint than AABB, but (usually) uses less memory bandwidth and computation than AABB.
 
 Axis-Aligned Bounding Octahedron
 --------------------------------
