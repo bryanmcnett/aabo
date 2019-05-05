@@ -81,6 +81,8 @@ Therefore, If the minABC is stored in one place and the maxABC is stored somewhe
 
 For a 2D AABB, no subset of the four checks encloses a finite area, and so if you were to try to do initial trivial rejection with less than four values, the initial bounding object would have infinite area. This is larger than the finite area of an AABH's first triangle. That is the essential advantage of AABH.
 
+For example, {minX, minY, maxX} is not a closed shape - it is unbounded in the direction of +Y. As an initial bounding object, it fails to form a tight boundary around any shape. The same is true of any combination of three. The {minA, minB, minC} of an AABH, however, is always an equilateral triangle, which reasonably bounds many shapes.
+
 AABH has a larger memory footprint than AABB, but (usually) uses less memory bandwidth and computation than AABB.
 
 Axis-Aligned Bounding Octahedron
