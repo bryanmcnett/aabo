@@ -154,7 +154,7 @@ The pragmatic axes look worse, and are worse, but still make triangles that encl
 
 ![Pre-existing AABB to AABO](images/pragmatic_post.png)
 
-This won't trivially reject any more objects than the original AABB, but it'll take less time because there are (usually) 3 checks instead of 4. 
+This AABH won't trivially reject any more objects than the original AABB, but the AABH will take less time to reject objects, because there are (usually) 3 checks instead of 4. 
 
 If you construct the AABH from the object's vertices instead, you can trivially reject more objects than an AABB can, too:
 
