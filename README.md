@@ -50,7 +50,7 @@ Interestingly, however, it is possible to perform an intersection test without l
 
 ![A horse enclosed in opposing bounding triangles](images/horse_triangle.png)
 
-That is why the data structure for an axis-aligned bounding triangle requires only (minA, minB, minC): it is sufficient to perform trivial intersection rejection tests:
+That is why the data structure for an axis-aligned bounding triangle requires only (minA, minB, minC): in 2D, three values are sufficient to perform trivial intersection rejection tests:
 
 ![A bounding triangle of minimum axis values](images/triangle_min.png)
 
