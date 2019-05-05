@@ -166,6 +166,6 @@ If you construct the AABH from the object's vertices instead, you can trivially 
 ![Pragmatic axis AABO](images/pragmatic_pre.png)
 
 If it's unclear how AABH is superior to AABB when doing a 3 check initial trivial rejection test, the image below may help to 
-explain. Even if you were to do 3 checks first with an AABB, no matter which 3 checks you chose, the resulting shape has infinite volume, which is larger than the finite volume enclosed by the first triangle of an AABH. A finite volume is more efficient at trivial rejection tests than an infinite volume, as it excludes more of space.
+explain. Even if you were to do 3 checks first with an AABB, no matter which 3 checks you chose, the resulting shape has infinite volume, which is larger than the finite volume enclosed by the first triangle of an AABH. A finite volume is more efficient at trivial rejection tests than an infinite volume, as it is a tighter fit around the object it contains.
 
 ![Inifinite Volume](images/infinity.png)
