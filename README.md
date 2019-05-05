@@ -154,7 +154,7 @@ The pragmatic axes look worse, and are worse, but still make triangles that encl
 
 ![Pre-existing AABB to AABO](images/pragmatic_post.png)
 
-This won't trivially reject any more objects than the original AABB, but it'll take less time because there are (usually) 3 checks instead of 4.
+This won't trivially reject any more objects than the original AABB, but it'll take less time because there are (usually) 3 checks instead of 4. 
 
 If you construct the AABH from the object's vertices instead, you can trivially reject more objects than an AABB can, too:
 
@@ -164,3 +164,8 @@ If you construct the AABH from the object's vertices instead, you can trivially 
 ```
 
 ![Pragmatic axis AABO](images/pragmatic_pre.png)
+
+If it's unclear how AABH can be faster than AABB when doing 3 checks, this image may help to explain. No matter which 3 checks
+you do with an AABB, the shape you choose for trivial rejection has infinite volume, which is much larger than the finite volume enclosed by the first three checks in an AABH:
+
+![Inifinite Volume](images/infinity.png)
