@@ -36,27 +36,27 @@ struct AABT { float minA, minB, minC; };
 
 2D AABB is well-understood. Here is an example of an object and its 2D AABB, where X bounds are red and Y are green:
 
-![A horse enclosed in a 2D AABB](horse_box.png)
+![A horse enclosed in a 2D AABB](images/horse_box.png)
 
 2D AABT (axis-aligned bounding triangle) is not as well known. It does not use the X and Y axes - it uses the three axes ABC, which could have the values [X, Y, -X-Y], but for simplicity’s sake let’s say they are at 120 degree angles to each other:
 
-![The ABC axes point at vertices of an equilateral triangle](abc_axes.png)
+![The ABC axes point at vertices of an equilateral triangle](images/abc_axes.png)
 
 The points from the horse image above can each be projected onto the ABC axes, and the minimum and maximum values for A, B, and C can be found, just as with AABB and XY:
 
-![A horse enclosed in opposing bounding triangles](horse_dual_triangle.png)
+![A horse enclosed in opposing bounding triangles](images/horse_dual_triangle.png)
 
 Interestingly, however, it is possible to perform an intersection test without looking at both the min and max values, unlike with AABB. Because (minA, minB, minC) form a triangle, we can trivially reject against those three values in isolation, without considering (maxA, maxB, maxC):
 
-![A horse enclosed in opposing bounding triangles](horse_triangle.png)
+![A horse enclosed in opposing bounding triangles](images/horse_triangle.png)
 
 That is why the data structure for an axis-aligned bounding triangle requires only (minA, minB, minC): it is sufficient to perform trivial intersection rejection tests:
 
-![A bounding triangle of minimum axis values](triangle_min.png)
+![A bounding triangle of minimum axis values](images/triangle_min.png)
 
 To perform a trivial rejection against a group of (minA, minB, minC) target objects, your probe object would need to have the form (maxA, maxB, maxC):
 
-![A bounding triangle of maximum axis values](triangle_max.png)
+![A bounding triangle of maximum axis values](images/triangle_max.png)
 
 And for each rejection test, if the probe’s maxA < the object’s minA (or B or C), they do not intersect. This is true of the two above triangles: they do not intersect.
 
@@ -99,7 +99,7 @@ Comparison to k-DOP
 
 Christer Ericson’s book “Real-Time Collision Detection” has the following to say about k-DOP, whose DOP8 is similar to Axis Aligned Bounding Octahedron:
 
-![Christer Ericon's book, talking about k-DOP](kdop.png)
+![Christer Ericon's book, talking about k-DOP](images/kdop.png)
 
 k-DOP is different from the ideas in this paper, in the following ways:
 
@@ -133,7 +133,7 @@ The Pragmatic Axes
 
 Though axes ABC that point at the vertices of an equilateral triangle are elegant and unbiased:
 
-![Elegant axes for Axis Aligned Bounding Triangle](abc_axes.png)
+![Elegant axes for Axis Aligned Bounding Triangle](images/abc_axes.png)
 
 Transforming between ABC and XY coordinates is costly, and can be avoided by choosing these more pragmatic axes:
 
@@ -143,6 +143,6 @@ B=Y
 C=-(X+Y)
 ```
 
-![Pragmatic axes for Axis Aligned Bounding Triangle](pragmatic.png)
+![Pragmatic axes for Axis Aligned Bounding Triangle](images/pragmatic.png)
 
 The pragmatic axes look worse, and are worse, but still make triangles that enclose objects pretty well, and in practice don't harm performance as much as you'd expect.
