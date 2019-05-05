@@ -145,4 +145,22 @@ C=-(X+Y)
 
 ![Pragmatic axes for Axis Aligned Bounding Triangle](images/pragmatic.png)
 
-The pragmatic axes look worse, and are worse, but still make triangles that enclose objects pretty well, and in practice don't harm performance as much as you'd expect.
+The pragmatic axes look worse, and are worse, but still make triangles that enclose objects pretty well. With these axes, it is possible to construct an AABO from a pre-existing AABB:
+
+```
+{minX, minY, -(maxX + maxY)}
+{maxX, maxY, -(minX + minY)}
+```
+
+![Pre-existing AABB to AABO](images/pragmatic_post.png)
+
+This won't cull any more objects than the original AABB, but it'll take less time because there are (usually) 3 checks instead of 4.
+
+If you construct the AABO from the object's vertices instead, you can cull more objects than an AABB can, too:
+
+```
+{minX, minY, -(max(X+Y)}
+{maxX, maxY, -(min(X+Y)}
+```
+
+![Pragmatic axis AABO](images/pragmatic_pre.png)
