@@ -159,8 +159,8 @@ This won't cull any more objects than the original AABB, but it'll take less tim
 If you construct the AABH from the object's vertices instead, you can cull more objects than an AABB can, too:
 
 ```
-{minX, minY, -(max(X+Y)}
-{maxX, maxY, -(min(X+Y)}
+{minX, minY, -max(X+Y)}
+{maxX, maxY, -min(X+Y)}
 ```
 
 ![Pragmatic axis AABO](images/pragmatic_pre.png)
