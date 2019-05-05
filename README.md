@@ -38,7 +38,7 @@ struct AABT { float minA, minB, minC; };
 
 ![A horse enclosed in a 2D AABB](images/horse_box.png)
 
-2D AABT (axis-aligned bounding triangle) is not as well known. It does not use the X and Y axes - it uses the three axes ABC, which could have the values [X, Y, -X-Y], but for simplicity’s sake let’s say they are at 120 degree angles to each other:
+2D AABT (axis-aligned bounding triangle) is not as well known. It does not use the X and Y axes - it uses the three axes ABC, which could have the values {X, Y, -(X+Y)}, but for simplicity’s sake let’s say they are at 120 degree angles to each other:
 
 ![The ABC axes point at vertices of an equilateral triangle](images/abc_axes.png)
 
@@ -46,7 +46,7 @@ The points from the horse image above can each be projected onto the ABC axes, a
 
 ![A horse enclosed in opposing bounding triangles](images/horse_dual_triangle.png)
 
-Interestingly, however, it is possible to perform an intersection test without looking at both the min and max values, unlike with AABB. Because (minA, minB, minC) form a triangle, we can trivially reject against those three values in isolation, without considering (maxA, maxB, maxC):
+Interestingly, however, it is possible to perform an intersection test without looking at both the min and max values, unlike with AABB. Because {minA, minB, minC} define a triangle, we can trivially reject against those three values in isolation, without considering {maxA, maxB, maxC}:
 
 ![A horse enclosed in opposing bounding triangles](images/horse_triangle.png)
 
@@ -54,20 +54,20 @@ That is why the data structure for an axis-aligned bounding triangle requires on
 
 ![A bounding triangle of minimum axis values](images/triangle_min.png)
 
-To perform a trivial rejection against a group of (minA, minB, minC) target objects, your probe object would need to have the form (maxA, maxB, maxC):
+To perform a trivial rejection against a group of {minA, minB, minC} target objects, your probe object would need to have the form {maxA, maxB, maxC}:
 
 ![A bounding triangle of maximum axis values](images/triangle_max.png)
 
 And for each rejection test, if the probe’s maxA < the object’s minA (or B or C), they do not intersect. This is true of the two above triangles: they do not intersect.
 
-There is no need for each object to store a (maxA, maxB, maxC) in addition to a (minA, minB, minC) simply to do intersection tests - only the probe needs (maxA, maxB, maxC). So if we stop here, we have a novel bounding volume with roughly the same characteristics as AABB, but 25% cheaper in 2D and 33% cheaper in 3D than AABB.
+There is no need for each object to store a {maxA, maxB, maxC} in addition to a {minA, minB, minC} simply to do intersection tests - only the probe needs {maxA, maxB, maxC}. So if we stop here, we have a novel bounding volume with roughly the same characteristics as AABB, but 25% cheaper in 2D and 33% cheaper in 3D than AABB.
 
 But if both min and max are stored in each object, an axis-aligned bounding hexagon results: 
  
 Axis-Aligned Bounding Hexagon
 -----------------------------
 
-The axis-aligned bounding hexagon has six scalars, which makes it 50% bigger than an axis-aligned bounding box: 
+The axis-aligned bounding hexagon (AABH) has six scalars, which makes it 50% bigger than an AABB with four: 
 
 ```
 struct AABB { float minX, minY, maxX, maxY; }; // bounding box
@@ -75,9 +75,9 @@ struct AABT { float A, B, C; }; // bounding triangle
 struct AABH { AABT minABC, maxABC; }; // bounding hexagon
 ```
 
-However, the hexagon has the nice property that it is made of two independent axis-aligned bounding triangles (minABC and maxABC), and unless two hexagons are nearly overlapping, a check of one hexagon’s minABC triangle vs the other’s maxABC triangle (or vice versa) is sufficient for trivial intersection rejection. 
+However, the hexagon has the nice property that it is made of two independent axis-aligned bounding triangles (minABC and maxABC), and unless two hexagons are nearly overlapping, a check of one hexagon’s minABC triangle vs the other’s maxABC triangle (or vice versa) is sufficient for initial trivial intersection rejection. 
 
-Therefore, If the minABC is stored in one cacheline and the maxABC is stored in another cacheline, a bounding hexagon check is usually as cheap as a bounding triangle check:
+Therefore, If the minABC is stored in one place and the maxABC is stored somewhere else, a bounding hexagon check is usually as cheap as a bounding triangle check, since the second triangle-triangle test is rarely necessary.
 
 A cheap axis-aligned bounding triangle test against minABC can be done first, and only in the unlikely event that an intersection test passes, a subsequent test against maxABC can be done if so desired. In this way, AABH has a larger memory footprint than AABB, but uses less memory bandwidth and computation than AABB.
 
@@ -92,7 +92,7 @@ struct AABT { float A, B, C, D; }; // bounding tetrahedron
 struct AABO { AABT minABCD, maxABCD; }; // bounding octahedron
 ```
 
-This makes AABO use 33% more memory than AABB, but since only the one of the two tetrahedra need be checked for initial trivial rejection, in practice a 3D AABO check is 4 scalars, and a 3D AABB check is 6. So, AABO uses 33% less bandwidth and computation than AABB.
+AABO uses 33% more memory than AABB, but since only the one of the two tetrahedra need be checked for initial trivial rejection, an AABO check is usually four comparisons, and a 3D AABB check is six. AABO uses 33% less bandwidth and computation than AABB.
 
 Comparison to k-DOP
 -------------------
