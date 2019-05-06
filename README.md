@@ -79,7 +79,7 @@ However, the hexagon has the nice property that it is made of two independent ax
 
 Therefore, If the minABC is stored in one place and the maxABC is stored somewhere else (in memory, on disk, etc.), a bounding hexagon check is usually as cheap as a bounding triangle check, since the second triangle is rarely read.
 
-For a 2D AABB, no subset of the four checks describes a closed shape, and so if you were to try to do initial trivial rejection with less than four values, the initial bounding object would have infinite area. This is larger than the finite area of an AABH's first triangle. That is the essential advantage of AABH.
+For a 2D AABB, no subset of its four values describes a closed shape, and so if you were to try to do initial trivial rejection with less than four values, the initial bounding object would have infinite area. This is larger than the finite area of an AABH's first triangle. That is the essential advantage of AABH.
 
 For example, {minX, minY, maxX} is not a closed shape - it is unbounded in the direction of +Y. As an initial bounding object, it fails to form a tight boundary around any shape. The same is true of any three of a 2D AABB's four values. The {minA, minB, minC} of an AABH, however, is always an equilateral triangle, which is a closed shape.
 
