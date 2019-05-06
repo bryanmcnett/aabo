@@ -96,7 +96,8 @@ struct AABT { float A, B, C, D; }; // bounding tetrahedron
 struct AABO { AABT minABCD, maxABCD; }; // bounding octahedron
 ```
 
-AABO uses 33% more memory than AABB, but since only the one of the two tetrahedra need be checked for initial trivial rejection, an AABO check is usually four comparisons, and a 3D AABB check is six. AABO uses 33% less bandwidth and computation than AABB.
+AABO uses 33% more memory than AABB, but since only the one of the two tetrahedra need be checked for initial trivial rejection, an AABO check is usually four comparisons, and a 3D AABB check is six. AABO uses 33% less bandwidth and computation than AABB, and has 2 extra
+planes than AABB, for making tighter bounding shapes.
 
 Comparison to k-DOP
 -------------------
