@@ -161,7 +161,7 @@ The pragmatic axes look worse, and are worse, but still make triangles that encl
 
 This AABH won't trivially reject any more objects than the original AABB, but the AABH will take less time to reject objects, because there are (usually) 3 checks instead of 4. 
 
-If you construct the AABH from the object's vertices instead, you can trivially reject more objects than an AABB can, but you won't be able to skip the 6th check:
+If you construct the AABH from the object's vertices instead, you can trivially reject more objects than an AABB can:
 
 ```
 {minX, minY, -max(X+Y)}
