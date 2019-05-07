@@ -174,19 +174,19 @@ int main(int argc, char* argv[])
     int intersections = 0;
     for(int test = 0; test < kTests; ++test)
     {
-      const float3 probeMin = aabbMin[test];
-      const float3 probeMax = aabbMax[test];
+      const float3 queryMin = aabbMin[test];
+      const float3 queryMax = aabbMax[test];
       for(int t = 0; t < kObjects; ++t)
       {
-        const float3 targetMin = aabbMin[t];
-        if(targetMin.x <= probeMax.x
-        && targetMin.y <= probeMax.y
-        && targetMin.z <= probeMax.z)
+        const float3 objectMin = aabbMin[t];
+        if(objectMin.x <= queryMax.x
+        && objectMin.y <= queryMax.y
+        && objectMin.z <= queryMax.z)
 	{
-	  const float3 targetMax = aabbMax[t];
-	  if(targetMax.x >= probeMin.x
-          && targetMax.y >= probeMin.y
-          && targetMax.z >= probeMin.z)  
+	  const float3 objectMax = aabbMax[t];
+	  if(objectMax.x >= queryMin.x
+          && objectMax.y >= queryMin.y
+          && objectMax.z >= queryMin.z)  
   	    ++intersections;
 	}
       }
@@ -201,19 +201,19 @@ int main(int argc, char* argv[])
     int intersections = 0;
     for(int test = 0; test < kTests; ++test)
     {
-      const float2 probeX = aabbX[test];
-      const float2 probeY = aabbY[test];
-      const float2 probeZ = aabbZ[test];
+      const float2 queryX = aabbX[test];
+      const float2 queryY = aabbY[test];
+      const float2 queryZ = aabbZ[test];
       for(int t = 0; t < kObjects; ++t)
       {
-        const float2 targetX = aabbX[t];
-        if(targetX.x <= probeX.y && targetX.y >= probeX.x)
+        const float2 objectX = aabbX[t];
+        if(objectX.x <= queryX.y && objectX.y >= queryX.x)
 	{
-          const float2 targetY = aabbY[t];
-          if(targetY.x <= probeY.y && targetY.y >= probeY.x)
+          const float2 objectY = aabbY[t];
+          if(objectY.x <= queryY.y && objectY.y >= queryY.x)
     	  {
-            const float2 targetZ = aabbZ[t];
-	    if(targetZ.x <= probeZ.y && targetZ.y >= probeZ.x)
+            const float2 objectZ = aabbZ[t];
+	    if(objectZ.x <= queryZ.y && objectZ.y >= queryZ.x)
     	      ++intersections;
 	  }
 	}
@@ -229,14 +229,14 @@ int main(int argc, char* argv[])
     int intersections = 0;
     for(int test = 0; test < kTests; ++test)
     {
-      const AABT probeMax = aabtMax[test];
+      const AABT queryMax = aabtMax[test];
       for(int t = 0; t < kObjects; ++t)
       {
-        const AABT targetMin = aabtMin[t];
-        if(targetMin.a <= probeMax.a
-        && targetMin.b <= probeMax.b
-        && targetMin.c <= probeMax.c
-        && targetMin.d <= probeMax.d)
+        const AABT objectMin = aabtMin[t];
+        if(objectMin.a <= queryMax.a
+        && objectMin.b <= queryMax.b
+        && objectMin.c <= queryMax.c
+        && objectMin.d <= queryMax.d)
         {
           ++intersections;
         }
@@ -252,21 +252,21 @@ int main(int argc, char* argv[])
     int intersections = 0;
     for(int test = 0; test < kTests; ++test)
     {
-      const AABT probeMin = aabtMin[test];
-      const AABT probeMax = aabtMax[test];
+      const AABT queryMin = aabtMin[test];
+      const AABT queryMax = aabtMax[test];
       for(int t = 0; t < kObjects; ++t)
       {
-        const AABT targetMin = aabtMin[t];
-        if(targetMin.a <= probeMax.a
-        && targetMin.b <= probeMax.b
-        && targetMin.c <= probeMax.c
-        && targetMin.d <= probeMax.d)
+        const AABT objectMin = aabtMin[t];
+        if(objectMin.a <= queryMax.a
+        && objectMin.b <= queryMax.b
+        && objectMin.c <= queryMax.c
+        && objectMin.d <= queryMax.d)
         {
-	  const AABT targetMax = aabtMax[t];
-	  if(targetMax.a >= probeMin.a
-	  && targetMax.b >= probeMin.b
-	  && targetMax.c >= probeMin.c
-	  && targetMax.d >= probeMin.d)
+	  const AABT objectMax = aabtMax[t];
+	  if(objectMax.a >= queryMin.a
+	  && objectMax.b >= queryMin.b
+	  && objectMax.c >= queryMin.c
+	  && objectMax.d >= queryMin.d)
 	  {
 	    ++intersections;
 	  }
