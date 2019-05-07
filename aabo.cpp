@@ -131,8 +131,10 @@ struct Object
 
 int main(int argc, char* argv[])
 {
-  Mesh mesh;
-  mesh.Generate(100, 1.0f);
+  const int kMeshes = 100;
+  Mesh mesh[kMeshes];
+  for(int m = 0; m < kMeshes; ++m)
+    mesh[m].Generate(50, 1.0f);
 
   const int kTests = 100;
   
@@ -140,7 +142,7 @@ int main(int argc, char* argv[])
   std::vector<Object> objects(kObjects);
   for(int o = 0; o < kObjects; ++o)
   {
-    objects[o].m_mesh = &mesh;
+    objects[o].m_mesh = &mesh[rand() % kMeshes];
     objects[o].m_position.x = random(-50.f, 50.f);
     objects[o].m_position.y = random(-50.f, 50.f);
     objects[o].m_position.z = random(-50.f, 50.f);
@@ -184,9 +186,9 @@ int main(int argc, char* argv[])
         && objectMin.z <= queryMax.z)
 	{
 	  const float3 objectMax = aabbMax[t];
-	  if(objectMax.x >= queryMin.x
-          && objectMax.y >= queryMin.y
-          && objectMax.z >= queryMin.z)  
+	  if(queryMin.x <= objectMax.x
+          && queryMin.y <= objectMax.y
+          && queryMin.z <= objectMax.z)
   	    ++intersections;
 	}
       }
@@ -207,13 +209,13 @@ int main(int argc, char* argv[])
       for(int t = 0; t < kObjects; ++t)
       {
         const float2 objectX = aabbX[t];
-        if(objectX.x <= queryX.y && objectX.y >= queryX.x)
+        if(objectX.x <= queryX.y && queryX.x <= objectX.y)
 	{
           const float2 objectY = aabbY[t];
-          if(objectY.x <= queryY.y && objectY.y >= queryY.x)
+          if(objectY.x <= queryY.y && queryY.x <= objectY.y)
     	  {
             const float2 objectZ = aabbZ[t];
-	    if(objectZ.x <= queryZ.y && objectZ.y >= queryZ.x)
+	    if(objectZ.x <= queryZ.y && queryZ.x <= objectZ.y)
     	      ++intersections;
 	  }
 	}
@@ -263,10 +265,10 @@ int main(int argc, char* argv[])
         && objectMin.d <= queryMax.d)
         {
 	  const AABT objectMax = aabtMax[t];
-	  if(objectMax.a >= queryMin.a
-	  && objectMax.b >= queryMin.b
-	  && objectMax.c >= queryMin.c
-	  && objectMax.d >= queryMin.d)
+	  if(queryMin.a <= objectMax.a
+	  && queryMin.b <= objectMax.b
+	  && queryMin.c <= objectMax.c
+          && queryMin.d <= objectMax.d)
 	  {
 	    ++intersections;
 	  }
