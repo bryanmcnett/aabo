@@ -17,6 +17,11 @@ struct Clock
   }
 };
 
+struct float2
+{
+  float x,y;
+};
+
 struct float3
 {
   float x,y,z;
@@ -49,12 +54,6 @@ float3 max(const float3 a, const float3 b)
   float3 c = {std::max(a.x,b.x), std::max(a.y,b.y), std::max(a.z,b.z)};
   return c;
 }
-
-struct AABB
-{
-  float3 m_min;
-  float3 m_max;
-};
 
 struct float4
 {
@@ -100,47 +99,30 @@ struct Mesh
   }
 };
 
-const float3 abcdInXyz[4] =
-{
- {-1,0,-1/sqrtf(2)}, // A
- {+1,0,-1/sqrtf(2)}, // B
- {0,-1, 1/sqrtf(2)}, // C
- {0,+1, 1/sqrtf(2)}, // D
-};
-
-float4 xyzToAbcd(const float3 xyz)
-{
-  float4 abcd;
-  abcd.a = dot(xyz, abcdInXyz[0]);
-  abcd.b = dot(xyz, abcdInXyz[1]);
-  abcd.c = dot(xyz, abcdInXyz[2]);
-  abcd.d = dot(xyz, abcdInXyz[3]);
-  return abcd;
-}
-
 struct Object
 {
   Mesh *m_mesh;
   float3 m_position;
-  void CalculateAABB(AABB* aabb) const
+  void CalculateAABB(float3* mini, float3* maxi) const
   {
     const float3 xyz = m_position + m_mesh->m_point[0];
-    aabb->m_min = aabb->m_max = xyz;
+    *mini = *maxi = xyz;
     for(int p = 1; p < m_mesh->m_point.size(); ++p)
     {
       const float3 xyz = m_position + m_mesh->m_point[p];
-      aabb->m_min = min(aabb->m_min, xyz);
-      aabb->m_max = max(aabb->m_max, xyz);
+      *mini = min(*mini, xyz);
+      *maxi = max(*maxi, xyz);
     }
   }
   void CalculateAABT(AABT* mini, AABT* maxi) const
   { 
     const float3 xyz = m_position + m_mesh->m_point[0];
-    *mini = *maxi = xyzToAbcd(xyz);
+    const float4 abcd = {xyz.x, xyz.y, xyz.z, -(xyz.x + xyz.y + xyz.z)};
+    *mini = *maxi = abcd;
     for(int p = 1; p < m_mesh->m_point.size(); ++p)
     {
       const float3 xyz = m_position + m_mesh->m_point[p];
-      const float4 abcd = xyzToAbcd(xyz);
+      const float4 abcd = {xyz.x, xyz.y, xyz.z, -(xyz.x + xyz.y + xyz.z)};
       *mini = min(*mini, abcd);
       *maxi = max(*maxi, abcd);
     }
@@ -164,40 +146,107 @@ int main(int argc, char* argv[])
     objects[o].m_position.z = random(-50.f, 50.f);
   }
   
-  std::vector<AABB> aabb(kObjects);
+  std::vector<float3> aabbMin(kObjects);
+  std::vector<float3> aabbMax(kObjects);
   for(int a = 0; a < kObjects; ++a)
-    objects[a].CalculateAABB(&aabb[a]);
+    objects[a].CalculateAABB(&aabbMin[a], &aabbMax[a]);
+
+  std::vector<float2> aabbX(kObjects);
+  std::vector<float2> aabbY(kObjects);
+  std::vector<float2> aabbZ(kObjects);
+  for(int a = 0; a < kObjects; ++a)
+  {
+    aabbX[a].x = aabbMin[a].x;
+    aabbX[a].y = aabbMax[a].x;
+    aabbY[a].x = aabbMin[a].y;
+    aabbY[a].y = aabbMax[a].y;
+    aabbZ[a].x = aabbMin[a].z;
+    aabbZ[a].y = aabbMax[a].z;
+  }
   
   std::vector<AABT> aabtMin(kObjects);
   std::vector<AABT> aabtMax(kObjects);
   for(int a = 0; a < kObjects; ++a)
     objects[a].CalculateAABT(&aabtMin[a], &aabtMax[a]);
   
-  // test how fast AABB is for kObjects * kObjects tests
   {
     const Clock clock;
     int intersections = 0;
     for(int test = 0; test < kTests; ++test)
     {
-      const AABB probe = aabb[test];
+      const float3 probeMin = aabbMin[test];
+      const float3 probeMax = aabbMax[test];
       for(int t = 0; t < kObjects; ++t)
       {
-        const AABB target = aabb[t];
-        if(target.m_min.x <= probe.m_max.x
-        && target.m_min.y <= probe.m_max.y
-        && target.m_min.z <= probe.m_max.z
-        && target.m_max.x >= probe.m_min.x
-        && target.m_max.y >= probe.m_min.y
-        && target.m_max.z >= probe.m_min.z)  
-  	  ++intersections;
+        const float3 targetMin = aabbMin[t];
+        if(targetMin.x <= probeMax.x
+        && targetMin.y <= probeMax.y
+        && targetMin.z <= probeMax.z)
+	{
+	  const float3 targetMax = aabbMax[t];
+	  if(targetMax.x >= probeMin.x
+          && targetMax.y >= probeMin.y
+          && targetMax.z >= probeMin.z)  
+  	    ++intersections;
+	}
       }
     }
     const float seconds = clock.seconds();
     
-    printf("AABB reported %d intersections in %f seconds\n", intersections, seconds);
+    printf("box min/max reported %d intersections in %f seconds\n", intersections, seconds);
   }
-  
-  // test how fast AABO is for kObjects * kObjects tests
+
+  {
+    const Clock clock;
+    int intersections = 0;
+    for(int test = 0; test < kTests; ++test)
+    {
+      const float2 probeX = aabbX[test];
+      const float2 probeY = aabbY[test];
+      const float2 probeZ = aabbZ[test];
+      for(int t = 0; t < kObjects; ++t)
+      {
+        const float2 targetX = aabbX[t];
+        if(targetX.x <= probeX.y && targetX.y >= probeX.x)
+	{
+          const float2 targetY = aabbY[t];
+          if(targetY.x <= probeY.y && targetY.y >= probeY.x)
+    	  {
+            const float2 targetZ = aabbZ[t];
+	    if(targetZ.x <= probeZ.y && targetZ.y >= probeZ.x)
+    	      ++intersections;
+	  }
+	}
+      }
+    }
+    const float seconds = clock.seconds();
+    
+    printf("box x/y/z reported %d intersections in %f seconds\n", intersections, seconds);
+  }
+
+  {
+    const Clock clock;
+    int intersections = 0;
+    for(int test = 0; test < kTests; ++test)
+    {
+      const AABT probeMax = aabtMax[test];
+      for(int t = 0; t < kObjects; ++t)
+      {
+        const AABT targetMin = aabtMin[t];
+        if(targetMin.a <= probeMax.a
+        && targetMin.b <= probeMax.b
+        && targetMin.c <= probeMax.c
+        && targetMin.d <= probeMax.d)
+        {
+          ++intersections;
+        }
+      }
+    }
+    const float seconds = clock.seconds();
+    
+    printf("tetrahedron reported %d intersections in %f seconds\n", intersections, seconds);
+  }
+
   {
     const Clock clock;
     int intersections = 0;
@@ -226,7 +275,8 @@ int main(int argc, char* argv[])
     }
     const float seconds = clock.seconds();
     
-    printf("AABO reported %d intersections in %f seconds\n", intersections, seconds);
+    printf("octahedron reported %d intersections in %f seconds\n", intersections, seconds);
   }
+
   return 0;
 }
