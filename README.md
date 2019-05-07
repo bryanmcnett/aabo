@@ -1,6 +1,8 @@
 ```
-AABB reported 45333 intersections in 3.073578 seconds
-AABO reported 41848 intersections in 2.297107 seconds
+box min/max reported 45333 intersections in 4.479811 seconds
+box x/y/z reported 45333 intersections in 3.980664 seconds
+tetrahedron reported 101107 intersections in 0.336251 seconds
+octahedron reported 41957 intersections in 2.753235 seconds
 ```
 
 Axis-Aligned Bounding Dual Simplex
