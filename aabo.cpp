@@ -170,6 +170,20 @@ int main(int argc, char* argv[])
   std::vector<AABT> aabtMax(kObjects);
   for(int a = 0; a < kObjects; ++a)
     objects[a].CalculateAABT(&aabtMin[a], &aabtMax[a]);
+
+  std::vector<AABT> heptaMin(kObjects);
+  std::vector<AABT> heptaMax(kObjects);
+  for(int a = 0; a < kObjects; ++a)
+  {
+    heptaMin[a].a = aabbMin[a].x;
+    heptaMin[a].b = aabbMin[a].y;
+    heptaMin[a].c = aabbMin[a].z;
+    heptaMin[a].d = -(aabbMax[a].x + aabbMax[a].y + aabbMax[a].z);
+    heptaMax[a].a = aabbMax[a].x;
+    heptaMax[a].b = aabbMax[a].y;
+    heptaMax[a].c = aabbMax[a].z;
+    heptaMax[a].d = -(aabbMin[a].x + aabbMin[a].y + aabbMin[a].z);
+  }
   
   {
     const Clock clock;
@@ -195,7 +209,7 @@ int main(int argc, char* argv[])
     }
     const float seconds = clock.seconds();
     
-    printf("box min/max reported %d intersections in %f seconds\n", intersections, seconds);
+    printf("AABB min/max failed to reject %d intersections in %f seconds\n", intersections, seconds);
   }
 
   {
@@ -223,7 +237,7 @@ int main(int argc, char* argv[])
     }
     const float seconds = clock.seconds();
     
-    printf("box x/y/z reported %d intersections in %f seconds\n", intersections, seconds);
+    printf("AABB x/y/z failed to reject %d intersections in %f seconds\n", intersections, seconds);
   }
 
   {
@@ -246,7 +260,7 @@ int main(int argc, char* argv[])
     }
     const float seconds = clock.seconds();
     
-    printf("tetrahedron reported %d intersections in %f seconds\n", intersections, seconds);
+    printf("tetrahedron failed to reject %d intersections in %f seconds\n", intersections, seconds);
   }
 
   {
@@ -277,7 +291,37 @@ int main(int argc, char* argv[])
     }
     const float seconds = clock.seconds();
     
-    printf("octahedron reported %d intersections in %f seconds\n", intersections, seconds);
+    printf("octahedron failed to reject %d intersections in %f seconds\n", intersections, seconds);
+  }
+
+  {
+    const Clock clock;
+    int intersections = 0;
+    for(int test = 0; test < kTests; ++test)
+    {
+      const AABT queryMin = heptaMin[test];
+      const AABT queryMax = heptaMax[test];
+      for(int t = 0; t < kObjects; ++t)
+      {
+        const AABT objectMin = heptaMin[t];
+        if(objectMin.a <= queryMax.a
+        && objectMin.b <= queryMax.b
+        && objectMin.c <= queryMax.c
+        && objectMin.d <= queryMax.d)
+        {
+	  const AABT objectMax = heptaMax[t];
+	  if(queryMin.a <= objectMax.a
+	  && queryMin.b <= objectMax.b
+          && queryMin.c <= objectMax.c)
+	  {
+	    ++intersections;
+	  }
+        }
+      }
+    }
+    const float seconds = clock.seconds();
+    
+    printf("7-plane AABB failed to reject %d intersections in %f seconds\n", intersections, seconds);
   }
 
   return 0;
