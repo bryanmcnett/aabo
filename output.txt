@@ -1,5 +1,5 @@
-AABB min/max failed to reject 39229 intersections in 4.347843 seconds
-AABB x/y/z failed to reject 39229 intersections in 3.981734 seconds
-tetrahedron failed to reject 84364 intersections in 0.389694 seconds
-octahedron failed to reject 35665 intersections in 2.744974 seconds
-7-plane AABB failed to reject 39229 intersections in 2.737058 seconds
+AABB min/max failed to reject 39229 objects in 4.527739 seconds
+AABB x/y/z failed to reject 39229 objects in 4.052477 seconds
+tetrahedron failed to reject 84364 objects in 0.386513 seconds
+octahedron failed to reject 35665 objects in 2.802192 seconds
+7-plane AABB failed to reject 39229 objects in 2.837670 seconds

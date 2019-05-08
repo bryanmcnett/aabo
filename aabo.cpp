@@ -72,8 +72,6 @@ float4 max(const float4 a, const float4 b)
   return c;
 }
 
-typedef float4 AABT;
-
 float random(float lo, float hi)
 {
   const int grain = 10000;
@@ -114,7 +112,7 @@ struct Object
       *maxi = max(*maxi, xyz);
     }
   }
-  void CalculateAABT(AABT* mini, AABT* maxi) const
+  void CalculateAABO(float4* mini, float4* maxi) const
   { 
     const float3 xyz = m_position + m_mesh->m_point[0];
     const float4 abcd = {xyz.x, xyz.y, xyz.z, -(xyz.x + xyz.y + xyz.z)};
@@ -139,7 +137,7 @@ int main(int argc, char* argv[])
   const int kTests = 100;
   
   const int kObjects = 10000000;
-  std::vector<Object> objects(kObjects);
+  Object* objects = new Object[kObjects];
   for(int o = 0; o < kObjects; ++o)
   {
     objects[o].m_mesh = &mesh[rand() % kMeshes];
@@ -148,14 +146,14 @@ int main(int argc, char* argv[])
     objects[o].m_position.z = random(-50.f, 50.f);
   }
   
-  std::vector<float3> aabbMin(kObjects);
-  std::vector<float3> aabbMax(kObjects);
+  float3* aabbMin = new float3[kObjects];
+  float3* aabbMax = new float3[kObjects];
   for(int a = 0; a < kObjects; ++a)
     objects[a].CalculateAABB(&aabbMin[a], &aabbMax[a]);
 
-  std::vector<float2> aabbX(kObjects);
-  std::vector<float2> aabbY(kObjects);
-  std::vector<float2> aabbZ(kObjects);
+  float2* aabbX = new float2[kObjects];
+  float2* aabbY = new float2[kObjects];
+  float2* aabbZ = new float2[kObjects];
   for(int a = 0; a < kObjects; ++a)
   {
     aabbX[a].x = aabbMin[a].x;
@@ -166,13 +164,13 @@ int main(int argc, char* argv[])
     aabbZ[a].y = aabbMax[a].z;
   }
   
-  std::vector<AABT> aabtMin(kObjects);
-  std::vector<AABT> aabtMax(kObjects);
+  float4* aabtMin = new float4[kObjects];
+  float4* aabtMax = new float4[kObjects];
   for(int a = 0; a < kObjects; ++a)
-    objects[a].CalculateAABT(&aabtMin[a], &aabtMax[a]);
+    objects[a].CalculateAABO(&aabtMin[a], &aabtMax[a]);
 
-  std::vector<AABT> heptaMin(kObjects);
-  std::vector<AABT> heptaMax(kObjects);
+  float4* heptaMin = new float4[kObjects];
+  float4* heptaMax = new float4[kObjects];
   for(int a = 0; a < kObjects; ++a)
   {
     heptaMin[a].a = aabbMin[a].x;
@@ -209,7 +207,7 @@ int main(int argc, char* argv[])
     }
     const float seconds = clock.seconds();
     
-    printf("AABB min/max failed to reject %d intersections in %f seconds\n", intersections, seconds);
+    printf("AABB min/max failed to reject %d objects in %f seconds\n", intersections, seconds);
   }
 
   {
@@ -237,7 +235,7 @@ int main(int argc, char* argv[])
     }
     const float seconds = clock.seconds();
     
-    printf("AABB x/y/z failed to reject %d intersections in %f seconds\n", intersections, seconds);
+    printf("AABB x/y/z failed to reject %d objects in %f seconds\n", intersections, seconds);
   }
 
   {
@@ -245,10 +243,10 @@ int main(int argc, char* argv[])
     int intersections = 0;
     for(int test = 0; test < kTests; ++test)
     {
-      const AABT queryMax = aabtMax[test];
+      const float4 queryMax = aabtMax[test];
       for(int t = 0; t < kObjects; ++t)
       {
-        const AABT objectMin = aabtMin[t];
+        const float4 objectMin = aabtMin[t];
         if(objectMin.a <= queryMax.a
         && objectMin.b <= queryMax.b
         && objectMin.c <= queryMax.c
@@ -260,7 +258,7 @@ int main(int argc, char* argv[])
     }
     const float seconds = clock.seconds();
     
-    printf("tetrahedron failed to reject %d intersections in %f seconds\n", intersections, seconds);
+    printf("tetrahedron failed to reject %d objects in %f seconds\n", intersections, seconds);
   }
 
   {
@@ -268,17 +266,17 @@ int main(int argc, char* argv[])
     int intersections = 0;
     for(int test = 0; test < kTests; ++test)
     {
-      const AABT queryMin = aabtMin[test];
-      const AABT queryMax = aabtMax[test];
+      const float4 queryMin = aabtMin[test];
+      const float4 queryMax = aabtMax[test];
       for(int t = 0; t < kObjects; ++t)
       {
-        const AABT objectMin = aabtMin[t];
+        const float4 objectMin = aabtMin[t];
         if(objectMin.a <= queryMax.a
         && objectMin.b <= queryMax.b
         && objectMin.c <= queryMax.c
         && objectMin.d <= queryMax.d)
         {
-	  const AABT objectMax = aabtMax[t];
+	  const float4 objectMax = aabtMax[t];
 	  if(queryMin.a <= objectMax.a
 	  && queryMin.b <= objectMax.b
 	  && queryMin.c <= objectMax.c
@@ -291,7 +289,7 @@ int main(int argc, char* argv[])
     }
     const float seconds = clock.seconds();
     
-    printf("octahedron failed to reject %d intersections in %f seconds\n", intersections, seconds);
+    printf("octahedron failed to reject %d objects in %f seconds\n", intersections, seconds);
   }
 
   {
@@ -299,17 +297,17 @@ int main(int argc, char* argv[])
     int intersections = 0;
     for(int test = 0; test < kTests; ++test)
     {
-      const AABT queryMin = heptaMin[test];
-      const AABT queryMax = heptaMax[test];
+      const float4 queryMin = heptaMin[test];
+      const float4 queryMax = heptaMax[test];
       for(int t = 0; t < kObjects; ++t)
       {
-        const AABT objectMin = heptaMin[t];
+        const float4 objectMin = heptaMin[t];
         if(objectMin.a <= queryMax.a
         && objectMin.b <= queryMax.b
         && objectMin.c <= queryMax.c
         && objectMin.d <= queryMax.d)
         {
-	  const AABT objectMax = heptaMax[t];
+	  const float4 objectMax = heptaMax[t];
 	  if(queryMin.a <= objectMax.a
 	  && queryMin.b <= objectMax.b
           && queryMin.c <= objectMax.c)
@@ -321,7 +319,7 @@ int main(int argc, char* argv[])
     }
     const float seconds = clock.seconds();
     
-    printf("7-plane AABB failed to reject %d intersections in %f seconds\n", intersections, seconds);
+    printf("7-plane AABB failed to reject %d objects in %f seconds\n", intersections, seconds);
   }
 
   return 0;
