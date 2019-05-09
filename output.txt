@@ -1,5 +1,9 @@
-AABB min/max failed to reject 39229 objects in 4.527739 seconds
-AABB x/y/z failed to reject 39229 objects in 4.052477 seconds
-tetrahedron failed to reject 84364 objects in 0.386513 seconds
-octahedron failed to reject 35665 objects in 2.802192 seconds
-7-plane AABB failed to reject 39229 objects in 2.837670 seconds
+AABB min/max accepted 39229 objects in 4.599109 seconds
+AABB x/y/z accepted 39229 objects in 4.212414 seconds
+tetrahedron accepted 84364 objects in 0.403436 seconds
+octahedron accepted 35665 objects in 2.910005 seconds
+7-plane AABB accepted 39229 objects in 2.880314 seconds
+
+6-plane AABB SIMD XY,Z accepted 39229 objects in 1.849607 seconds
+6-plane AABB SIMD Z,XY accepted 39229 objects in 2.584419 seconds
+7-plane AABB SIMD accepted 39229 objects in 1.765466 seconds

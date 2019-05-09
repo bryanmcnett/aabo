@@ -2,6 +2,7 @@
 #include <vector>
 #include <time.h>
 #include <math.h>
+#include <immintrin.h>
 
 struct Clock
 {
@@ -55,9 +56,10 @@ float3 max(const float3 a, const float3 b)
   return c;
 }
 
-struct float4
+union float4
 {
-  float a,b,c,d;
+  __m128 m;
+  struct { float a,b,c,d; };
 };
 
 float4 min(const float4 a, const float4 b)
@@ -163,6 +165,21 @@ int main(int argc, char* argv[])
     aabbZ[a].x = aabbMin[a].z;
     aabbZ[a].y = aabbMax[a].z;
   }
+
+  float4 *aabbXY = new float4[kObjects]; 
+  float4 *aabbZZ = new float4[kObjects/2];
+  {
+    float2* ZZ = (float2*)aabbZZ;
+    for(int o = 0; o < kObjects; ++o)
+    {
+      aabbXY[o].a =  aabbMin[o].x;
+      aabbXY[o].b = -aabbMax[o].x; // so SIMD tests are <= x4
+      aabbXY[o].c =  aabbMin[o].y;
+      aabbXY[o].d = -aabbMax[o].y; // so SIMD tests are <= x4
+          ZZ[o].x =  aabbMin[o].z; 
+          ZZ[o].y = -aabbMax[o].z; // so SIMD tests are <= x4
+    }
+  }
   
   float4* aabtMin = new float4[kObjects];
   float4* aabtMax = new float4[kObjects];
@@ -182,7 +199,7 @@ int main(int argc, char* argv[])
     heptaMax[a].c = aabbMax[a].z;
     heptaMax[a].d = -(aabbMin[a].x + aabbMin[a].y + aabbMin[a].z);
   }
-  
+
   {
     const Clock clock;
     int intersections = 0;
@@ -207,7 +224,7 @@ int main(int argc, char* argv[])
     }
     const float seconds = clock.seconds();
     
-    printf("AABB min/max failed to reject %d objects in %f seconds\n", intersections, seconds);
+    printf("AABB min/max accepted %d objects in %f seconds\n", intersections, seconds);
   }
 
   {
@@ -235,7 +252,7 @@ int main(int argc, char* argv[])
     }
     const float seconds = clock.seconds();
     
-    printf("AABB x/y/z failed to reject %d objects in %f seconds\n", intersections, seconds);
+    printf("AABB x/y/z accepted %d objects in %f seconds\n", intersections, seconds);
   }
 
   {
@@ -258,7 +275,7 @@ int main(int argc, char* argv[])
     }
     const float seconds = clock.seconds();
     
-    printf("tetrahedron failed to reject %d objects in %f seconds\n", intersections, seconds);
+    printf("tetrahedron accepted %d objects in %f seconds\n", intersections, seconds);
   }
 
   {
@@ -289,7 +306,7 @@ int main(int argc, char* argv[])
     }
     const float seconds = clock.seconds();
     
-    printf("octahedron failed to reject %d objects in %f seconds\n", intersections, seconds);
+    printf("octahedron accepted %d objects in %f seconds\n", intersections, seconds);
   }
 
   {
@@ -319,7 +336,102 @@ int main(int argc, char* argv[])
     }
     const float seconds = clock.seconds();
     
-    printf("7-plane AABB failed to reject %d objects in %f seconds\n", intersections, seconds);
+    printf("7-plane AABB accepted %d objects in %f seconds\n", intersections, seconds);
+  }
+
+  printf("\n");
+
+  {
+    const Clock clock;
+    int intersections = 0;
+    for(int test = 0; test < kTests; ++test)
+    {
+      float4 queryXY, queryZZ;
+      queryXY   = aabbXY[test];
+      queryZZ.m = _mm_loadu_ps((float*)aabbZZ + test * 2);
+
+      queryXY.m = _mm_sub_ps(_mm_setzero_ps(), queryXY.m);    
+      queryZZ.m = _mm_sub_ps(_mm_setzero_ps(), queryZZ.m);
+
+      queryXY.m = _mm_shuffle_ps(queryXY.m, queryXY.m, _MM_SHUFFLE(2,3,0,1));
+      queryZZ.m = _mm_shuffle_ps(queryZZ.m, queryZZ.m, _MM_SHUFFLE(0,1,0,1));
+      for(int t = 0; t < kObjects; ++t)
+      {
+        const float4 objectXY = aabbXY[t];
+        if(_mm_movemask_ps(_mm_cmplt_ps(queryXY.m, objectXY.m)) == 0x0)
+        {
+	  float4 objectZZ;
+	  objectZZ.m = _mm_loadu_ps((float*)aabbZZ + t * 2);
+	  objectZZ.m = _mm_movelh_ps(objectZZ.m, objectZZ.m);
+	  if(_mm_movemask_ps(_mm_cmplt_ps(queryZZ.m, objectZZ.m)) == 0x0)
+	  {
+	      ++intersections;
+	  }
+	}
+      }
+    }
+    const float seconds = clock.seconds();
+    
+    printf("6-plane AABB SIMD XY,Z accepted %d objects in %f seconds\n", intersections, seconds);
+  }
+
+  {
+    const Clock clock;
+    int intersections = 0;
+    for(int test = 0; test < kTests; ++test)
+    {
+      float4 queryXY, queryZZ;
+      queryXY   = aabbXY[test];
+      queryZZ.m = _mm_loadu_ps((float*)aabbZZ + test * 2);
+
+      queryXY.m = _mm_sub_ps(_mm_setzero_ps(), queryXY.m);    
+      queryZZ.m = _mm_sub_ps(_mm_setzero_ps(), queryZZ.m);
+
+      queryXY.m = _mm_shuffle_ps(queryXY.m, queryXY.m, _MM_SHUFFLE(2,3,0,1));
+      queryZZ.m = _mm_shuffle_ps(queryZZ.m, queryZZ.m, _MM_SHUFFLE(0,1,0,1));
+      for(int t = 0; t < kObjects; ++t)
+      {
+	  float4 objectZZ;
+	  objectZZ.m = _mm_loadu_ps((float*)aabbZZ + t * 2);
+	  objectZZ.m = _mm_movelh_ps(objectZZ.m, objectZZ.m);
+	  if(_mm_movemask_ps(_mm_cmplt_ps(queryZZ.m, objectZZ.m)) == 0x0)
+	  {
+            const float4 objectXY = aabbXY[t];
+            if(_mm_movemask_ps(_mm_cmplt_ps(queryXY.m, objectXY.m)) == 0x0)
+            {
+	      ++intersections;
+	    }
+	  }
+      }
+    }
+    const float seconds = clock.seconds();
+    
+    printf("6-plane AABB SIMD Z,XY accepted %d objects in %f seconds\n", intersections, seconds);
+  }
+
+  {
+    const Clock clock;
+    int intersections = 0;
+    for(int test = 0; test < kTests; ++test)
+    {
+      const float4 queryMin = heptaMin[test];
+      const float4 queryMax = heptaMax[test];
+      for(int t = 0; t < kObjects; ++t)
+      {
+        const float4 objectMin = heptaMin[t];
+        if(_mm_movemask_ps(_mm_cmplt_ps(queryMax.m, objectMin.m)) == 0x0)
+        {
+	  const float4 objectMax = heptaMax[t];
+	  if(_mm_movemask_ps(_mm_cmplt_ps(objectMax.m, queryMin.m)) == 0x0)
+	  {
+	    ++intersections;
+	  }
+        }
+      }
+    }
+    const float seconds = clock.seconds();
+    
+    printf("7-plane AABB SIMD accepted %d objects in %f seconds\n", intersections, seconds);
   }
 
   return 0;
