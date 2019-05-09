@@ -434,5 +434,30 @@ int main(int argc, char* argv[])
     printf("7-plane AABB SIMD accepted %d objects in %f seconds\n", intersections, seconds);
   }
 
+  {
+    const Clock clock;
+    int intersections = 0;
+    for(int test = 0; test < kTests; ++test)
+    {
+      const float4 queryMin = aabtMin[test];
+      const float4 queryMax = aabtMax[test];
+      for(int t = 0; t < kObjects; ++t)
+      {
+        const float4 objectMin = aabtMin[t];
+        if(_mm_movemask_ps(_mm_cmplt_ps(queryMax.m, objectMin.m)) == 0x0)
+        {
+	  const float4 objectMax = aabtMax[t];
+	  if(_mm_movemask_ps(_mm_cmplt_ps(objectMax.m, queryMin.m)) == 0x0)
+	  {
+	    ++intersections;
+	  }
+        }
+      }
+    }
+    const float seconds = clock.seconds();
+    
+    printf("octahedron SIMD accepted %d objects in %f seconds\n", intersections, seconds);
+  }
+
   return 0;
 }
