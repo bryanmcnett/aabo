@@ -201,22 +201,30 @@ int main(int argc, char* argv[])
   for(int a = 0; a < kObjects; ++a)
     objects[a].CalculateAABO(&aabtMin[a], &aabtMax[a]);
 
-  float4* heptaMin = new float4[kObjects];
-  float4* heptaMax = new float4[kObjects];
+  float4* sevenMin = new float4[kObjects];
+  float4* sevenMax = new float4[kObjects];
   for(int a = 0; a < kObjects; ++a)
   {
-    heptaMin[a].a = aabbMin[a].x;
-    heptaMin[a].b = aabbMin[a].y;
-    heptaMin[a].c = aabbMin[a].z;
-    heptaMin[a].d = -(aabbMax[a].x + aabbMax[a].y + aabbMax[a].z);
-    heptaMax[a].a = aabbMax[a].x;
-    heptaMax[a].b = aabbMax[a].y;
-    heptaMax[a].c = aabbMax[a].z;
-    heptaMax[a].d = -(aabbMin[a].x + aabbMin[a].y + aabbMin[a].z);
+    sevenMin[a].a = aabbMin[a].x;
+    sevenMin[a].b = aabbMin[a].y;
+    sevenMin[a].c = aabbMin[a].z;
+    sevenMin[a].d = -(aabbMax[a].x + aabbMax[a].y + aabbMax[a].z);
+    sevenMax[a].a = aabbMax[a].x;
+    sevenMax[a].b = aabbMax[a].y;
+    sevenMax[a].c = aabbMax[a].z;
+    sevenMax[a].d = -(aabbMin[a].x + aabbMin[a].y + aabbMin[a].z);
   }
 
+  const char *title = "%22s | %9s | %9s | %7s | %7s\n";
+
+  printf(title, "Bounding Volume", "trivials", "trivials", "accepts", "seconds");
+  printf("------------------------------------------------------------------\n");
+  
+  const char *format = "%22s | %9d | %9d | %7d | %3.4f\n";
+  
   {
     const Clock clock;
+    int trivials = 0;
     int intersections = 0;
     for(int test = 0; test < kTests; ++test)
     {
@@ -229,6 +237,7 @@ int main(int argc, char* argv[])
         && objectMin.y <= queryMax.y
         && objectMin.z <= queryMax.z)
 	{
+	  ++trivials;
 	  const float3 objectMax = aabbMax[t];
 	  if(queryMin.x <= objectMax.x
           && queryMin.y <= objectMax.y
@@ -239,11 +248,13 @@ int main(int argc, char* argv[])
     }
     const float seconds = clock.seconds();
     
-    printf("AABB min/max accepted %d objects in %f seconds\n", intersections, seconds);
+    printf(format, "AABB MIN,MAX", 0, trivials, intersections, seconds);
   }
 
   {
     const Clock clock;
+    int trivialX = 0;
+    int trivialY = 0;
     int intersections = 0;
     for(int test = 0; test < kTests; ++test)
     {
@@ -255,9 +266,11 @@ int main(int argc, char* argv[])
         const float2 objectX = aabbX[t];
         if(objectX.x <= queryX.y && queryX.x <= objectX.y)
 	{
+	  ++trivialX;
           const float2 objectY = aabbY[t];
           if(objectY.x <= queryY.y && queryY.x <= objectY.y)
     	  {
+	    ++trivialY;
             const float2 objectZ = aabbZ[t];
 	    if(objectZ.x <= queryZ.y && queryZ.x <= objectZ.y)
     	      ++intersections;
@@ -267,7 +280,7 @@ int main(int argc, char* argv[])
     }
     const float seconds = clock.seconds();
     
-    printf("AABB x/y/z accepted %d objects in %f seconds\n", intersections, seconds);
+    printf(format, "AABB X,Y,Z", trivialX, trivialY, intersections, seconds);
   }
 
   {
@@ -290,12 +303,13 @@ int main(int argc, char* argv[])
     }
     const float seconds = clock.seconds();
     
-    printf("tetrahedron accepted %d objects in %f seconds\n", intersections, seconds);
+    printf(format, "Tetrahedron", 0, 0, intersections, seconds);
   }
 
   {
     const Clock clock;
-    int intersections = 0;
+    int trivials = 0;
+    int intersections = 0;    
     for(int test = 0; test < kTests; ++test)
     {
       const float4 queryMin = aabtMin[test];
@@ -308,6 +322,7 @@ int main(int argc, char* argv[])
         && objectMin.c <= queryMax.c
         && objectMin.d <= queryMax.d)
         {
+	  ++trivials;
 	  const float4 objectMax = aabtMax[t];
 	  if(queryMin.a <= objectMax.a
 	  && queryMin.b <= objectMax.b
@@ -321,25 +336,27 @@ int main(int argc, char* argv[])
     }
     const float seconds = clock.seconds();
     
-    printf("octahedron accepted %d objects in %f seconds\n", intersections, seconds);
+    printf(format, "Octahedron", 0, trivials, intersections, seconds);
   }
 
   {
     const Clock clock;
+    int trivials = 0;
     int intersections = 0;
     for(int test = 0; test < kTests; ++test)
     {
-      const float4 queryMin = heptaMin[test];
-      const float4 queryMax = heptaMax[test];
+      const float4 queryMin = sevenMin[test];
+      const float4 queryMax = sevenMax[test];
       for(int t = 0; t < kObjects; ++t)
       {
-        const float4 objectMin = heptaMin[t];
+        const float4 objectMin = sevenMin[t];
         if(objectMin.a <= queryMax.a
         && objectMin.b <= queryMax.b
         && objectMin.c <= queryMax.c
         && objectMin.d <= queryMax.d)
         {
-	  const float4 objectMax = heptaMax[t];
+	  ++trivials;
+	  const float4 objectMax = sevenMax[t];
 	  if(queryMin.a <= objectMax.a
 	  && queryMin.b <= objectMax.b
           && queryMin.c <= objectMax.c)
@@ -351,13 +368,14 @@ int main(int argc, char* argv[])
     }
     const float seconds = clock.seconds();
     
-    printf("7-plane AABB accepted %d objects in %f seconds\n", intersections, seconds);
+    printf(format, "7-Sided AABB", 0, trivials, intersections, seconds);
   }
 
   printf("\n");
 
   {
     const Clock clock;
+    int trivials = 0;
     int intersections = 0;
     for(int test = 0; test < kTests; ++test)
     {
@@ -375,6 +393,7 @@ int main(int argc, char* argv[])
         const float4 objectXY = aabbXY[t];
         if(_mm_movemask_ps(_mm_cmplt_ps(queryXY.m, objectXY.m)) == 0x0)
         {
+          ++trivials;
 	  float4 objectZZ;
 	  objectZZ.m = _mm_loadu_ps((float*)aabbZZ + t * 2);
 	  objectZZ.m = _mm_movelh_ps(objectZZ.m, objectZZ.m);
@@ -387,11 +406,12 @@ int main(int argc, char* argv[])
     }
     const float seconds = clock.seconds();
     
-    printf("6-plane AABB SIMD XY,Z accepted %d objects in %f seconds\n", intersections, seconds);
+    printf(format, "6-Sided AABB XY,Z SIMD", 0, trivials, intersections, seconds);
   }
 
   {
     const Clock clock;
+    int trivials = 0;
     int intersections = 0;
     for(int test = 0; test < kTests; ++test)
     {
@@ -411,6 +431,7 @@ int main(int argc, char* argv[])
 	  objectZZ.m = _mm_movelh_ps(objectZZ.m, objectZZ.m);
 	  if(_mm_movemask_ps(_mm_cmplt_ps(queryZZ.m, objectZZ.m)) == 0x0)
 	  {
+            ++trivials;
             const float4 objectXY = aabbXY[t];
             if(_mm_movemask_ps(_mm_cmplt_ps(queryXY.m, objectXY.m)) == 0x0)
             {
@@ -421,22 +442,24 @@ int main(int argc, char* argv[])
     }
     const float seconds = clock.seconds();
     
-    printf("6-plane AABB SIMD Z,XY accepted %d objects in %f seconds\n", intersections, seconds);
+    printf(format, "6-Sided AABB Z,XY SIMD", 0, trivials, intersections, seconds);
   }
 
   {
     const Clock clock;
+    int trivials = 0;
     int intersections = 0;
     for(int test = 0; test < kTests; ++test)
     {
-      const float4 queryMin = heptaMin[test];
-      const float4 queryMax = heptaMax[test];
+      const float4 queryMin = sevenMin[test];
+      const float4 queryMax = sevenMax[test];
       for(int t = 0; t < kObjects; ++t)
       {
-        const float4 objectMin = heptaMin[t];
+        const float4 objectMin = sevenMin[t];
         if(_mm_movemask_ps(_mm_cmplt_ps(queryMax.m, objectMin.m)) == 0x0)
         {
-	  const float4 objectMax = heptaMax[t];
+          ++trivials;
+	  const float4 objectMax = sevenMax[t];
 	  if(_mm_movemask_ps(_mm_cmplt_ps(objectMax.m, queryMin.m)) == 0x0)
 	  {
 	    ++intersections;
@@ -446,11 +469,12 @@ int main(int argc, char* argv[])
     }
     const float seconds = clock.seconds();
     
-    printf("7-plane AABB SIMD accepted %d objects in %f seconds\n", intersections, seconds);
+    printf(format, "7-Sided AABB SIMD", 0, trivials, intersections, seconds);
   }
 
   {
     const Clock clock;
+    int trivials = 0;
     int intersections = 0;
     for(int test = 0; test < kTests; ++test)
     {
@@ -461,6 +485,7 @@ int main(int argc, char* argv[])
         const float4 objectMin = aabtMin[t];
         if(_mm_movemask_ps(_mm_cmplt_ps(queryMax.m, objectMin.m)) == 0x0)
         {
+	  ++trivials;
 	  const float4 objectMax = aabtMax[t];
 	  if(_mm_movemask_ps(_mm_cmplt_ps(objectMax.m, queryMin.m)) == 0x0)
 	  {
@@ -471,7 +496,7 @@ int main(int argc, char* argv[])
     }
     const float seconds = clock.seconds();
     
-    printf("octahedron SIMD accepted %d objects in %f seconds\n", intersections, seconds);
+    printf(format, "Octahedron SIMD", 0, trivials, intersections, seconds);
   }
 
   return 0;
