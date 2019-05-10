@@ -1,18 +1,18 @@
 ```
-AABB min/max accepted 39229 objects in 4.497502 seconds
-AABB x/y/z accepted 39229 objects in 4.151347 seconds
-tetrahedron accepted 84364 objects in 0.397938 seconds
-octahedron accepted 35665 objects in 2.868349 seconds
-7-plane AABB accepted 39229 objects in 2.878937 seconds
+AABB min/max accepted 39229 objects in 4.397070 seconds
+AABB x/y/z accepted 39229 objects in 3.831975 seconds
+tetrahedron accepted 67752 objects in 0.279901 seconds
+octahedron accepted 33793 objects in 1.911023 seconds
+7-plane AABB accepted 39229 objects in 2.702142 seconds
 
-6-plane AABB SIMD XY,Z accepted 39229 objects in 1.859909 seconds
-6-plane AABB SIMD Z,XY accepted 39229 objects in 2.528131 seconds
-7-plane AABB SIMD accepted 39229 objects in 1.746439 seconds
-octahedron SIMD accepted 35665 objects in 1.758315 seconds
+6-plane AABB SIMD XY,Z accepted 39229 objects in 1.608971 seconds
+6-plane AABB SIMD Z,XY accepted 39229 objects in 2.403031 seconds
+7-plane AABB SIMD accepted 39229 objects in 1.533988 seconds
+octahedron SIMD accepted 33793 objects in 1.551102 seconds
 ```
 
-Axis-Aligned Bounding Dual Simplex
-==================================
+The Axis-Aligned Bounding Octahedron and 7-sided AABB
+=====================================================
 
 >In computer graphics and computational geometry, a bounding volume for a set of objects is a closed 
 >volume that completely contains the union of the objects in the set. Bounding volumes are used to 
