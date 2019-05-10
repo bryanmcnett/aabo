@@ -99,6 +99,14 @@ struct Mesh
   }
 };
 
+const float3 axes[] =
+{
+ {  sqrtf(8/9.f),             0, -1/3.f},
+ { -sqrtf(2/9.f),  sqrtf(2/3.f), -1/3.f},
+ { -sqrtf(2/9.f), -sqrtf(2/3.f), -1/3.f},
+ { 0, 0, 1 }
+};
+
 struct Object
 {
   Mesh *m_mesh;
@@ -117,12 +125,19 @@ struct Object
   void CalculateAABO(float4* mini, float4* maxi) const
   { 
     const float3 xyz = m_position + m_mesh->m_point[0];
-    const float4 abcd = {xyz.x, xyz.y, xyz.z, -(xyz.x + xyz.y + xyz.z)};
+    float4 abcd;
+    abcd.a = dot(xyz, axes[0]);
+    abcd.b = dot(xyz, axes[1]);
+    abcd.c = dot(xyz, axes[2]);
+    abcd.d = dot(xyz, axes[3]);
     *mini = *maxi = abcd;
     for(int p = 1; p < m_mesh->m_point.size(); ++p)
     {
       const float3 xyz = m_position + m_mesh->m_point[p];
-      const float4 abcd = {xyz.x, xyz.y, xyz.z, -(xyz.x + xyz.y + xyz.z)};
+      abcd.a = dot(xyz, axes[0]);
+      abcd.b = dot(xyz, axes[1]);
+      abcd.c = dot(xyz, axes[2]);
+      abcd.d = dot(xyz, axes[3]);      
       *mini = min(*mini, abcd);
       *maxi = max(*maxi, abcd);
     }
@@ -134,7 +149,7 @@ int main(int argc, char* argv[])
   const int kMeshes = 100;
   Mesh mesh[kMeshes];
   for(int m = 0; m < kMeshes; ++m)
-    mesh[m].Generate(50, 1.0f);
+    mesh[m].Generate(50, 1.f);
 
   const int kTests = 100;
   
