@@ -1,18 +1,20 @@
 ```
-AABB min/max accepted 39229 objects in 4.397070 seconds
-AABB x/y/z accepted 39229 objects in 3.831975 seconds
-tetrahedron accepted 67752 objects in 0.279901 seconds
-octahedron accepted 33793 objects in 1.911023 seconds
-7-plane AABB accepted 39229 objects in 2.702142 seconds
+       Bounding Volume |  trivials |  trivials | accepts | seconds
+------------------------------------------------------------------
+          AABB MIN,MAX |         0 | 152349412 |   39229 | 4.7276
+            AABB X,Y,Z |  34310232 |   1154457 |   39229 | 4.2566
+           Tetrahedron |         0 |         0 |   67752 | 0.3066
+            Octahedron |         0 |     67752 |   33793 | 2.0796
+          7-Sided AABB |         0 |    172382 |   39229 | 2.9394
 
-6-plane AABB SIMD XY,Z accepted 39229 objects in 1.608971 seconds
-6-plane AABB SIMD Z,XY accepted 39229 objects in 2.403031 seconds
-7-plane AABB SIMD accepted 39229 objects in 1.533988 seconds
-octahedron SIMD accepted 33793 objects in 1.551102 seconds
+6-Sided AABB XY,Z SIMD |         0 |   1154457 |   39229 | 1.8369
+6-Sided AABB Z,XY SIMD |         0 |  33819438 |   39229 | 2.5227
+     7-Sided AABB SIMD |         0 |    172382 |   39229 | 1.6998
+Octahedron SIMD        | 0         |     67752 |   33793 | 1.7737
 ```
 
-The Axis-Aligned Bounding Octahedron and 7-sided AABB
-=====================================================
+The Axis-Aligned Bounding Octahedron and The 7-sided AABB
+=========================================================
 
 >In computer graphics and computational geometry, a bounding volume for a set of objects is a closed 
 >volume that completely contains the union of the objects in the set. Bounding volumes are used to 
@@ -70,7 +72,7 @@ And for each rejection test, if the probe’s maxA < the object’s minA (or B o
 
 There is no need for each object to store a {maxA, maxB, maxC} in addition to a {minA, minB, minC} simply to do intersection tests - only the probe needs {maxA, maxB, maxC}. So if we stop here, we have a novel bounding volume with roughly the same characteristics as AABB, but 25% cheaper in 2D and 33% cheaper in 3D than AABB.
 
-But if both min and max are stored in each object, an axis-aligned bounding hexagon results: 
+But if both min and max are stored in each object, an axis-aligned bounding hexagon appears: 
  
 Axis-Aligned Bounding Hexagon
 -----------------------------
