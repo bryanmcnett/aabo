@@ -10,7 +10,7 @@
 6-Sided AABB XY,Z SIMD |         0 |   1154457 |   39229 | 1.8369
 6-Sided AABB Z,XY SIMD |         0 |  33819438 |   39229 | 2.5227
      7-Sided AABB SIMD |         0 |    172382 |   39229 | 1.6998
-Octahedron SIMD        | 0         |     67752 |   33793 | 1.7737
+       Octahedron SIMD |         0 |     67752 |   33793 | 1.7737
 ```
 
 The Axis-Aligned Bounding Octahedron and The 7-sided AABB
