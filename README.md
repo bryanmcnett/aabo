@@ -149,7 +149,7 @@ Christer Ericson’s book “Real-Time Collision Detection” has the following 
 k-DOP is different from the ideas in this paper, in the following ways:
 
 * An Axis-Aligned Bounding Simplex does not have opposing half-spaces, so it is not a k-DOP; there is no such thing as a 4-DOP in 3D.
-* k-DOP is about opposing half-spaces, and AABO is about opposing pairs of bounding polyhedra. a 6-DOP doesn’t have opposing polyhedra - it has only one rectangular solid - but still qualifies as a k-DOP. An 8-DOP *can* have opposing tetrahedra, but nowhere in literature can we find anyone mentioning this or making use of it, despite its large performance advantage.
+* k-DOP is about opposing half-spaces, and AABO is about opposing bounding polyhedra. a 6-DOP doesn’t have opposing polyhedra - it has one rectangular solid - but still qualifies as a k-DOP. An 8-DOP *can* have opposing tetrahedra, but nowhere in literature can we find anyone mentioning this or making use of it, despite its large performance advantage.
 * A k-DOP can not have opposing polyhedra if all of its axes are in the same hemisphere. Almost always in literature, k-DOP axes have non-negative [X,Y,Z] values, which places them in the same hemisphere. Nowhere can we find discussion of how choice of axes affects a k-DOP’s ability to have opposing polyhedra, which is required to avoid reading half of its data most of the time.
 * AABO is necessarily SOA (structure-of-arrays) to avoid reading the maxABCD tetrahedron into memory unless it's needed, and 8-DOP is AOS (array-of-structures) in all known code.  
 ```
