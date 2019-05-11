@@ -1,4 +1,4 @@
-r```
+```
        Bounding Volume |  trivials |  trivials | accepts | seconds
 ------------------------------------------------------------------
           AABB MIN,MAX |         0 | 152349412 |   39229 | 4.7276
