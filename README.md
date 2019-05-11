@@ -218,6 +218,8 @@ The pragmatic axes look worse, and are worse, but still make triangles that encl
 
 ![Pre-existing AABB to AABO](images/pragmatic_post.png)
 
+This AABH won't trivially reject any more objects than the original AABB, but the AABH will take less time to reject objects, because there are (usually) 3 checks instead of 4. 
+
 At first, the three planes of a triangle are checked, and only if that check passes, two more planes are checked. The
 intersection of the five planes is identical to the four planes of a bounding box, but in most cases, only the first
 three planes will be checked.
@@ -226,8 +228,6 @@ three planes will be checked.
 
 In 3D the above needs 7 planes, and is equivalent to a 3D AABB. In all tests I made, this *7-Sided AABB* outperforms
 the 6-Sided AABB, because it almost always stops after comparing 4 planes, instead of 6.
-
-This AABH won't trivially reject any more objects than the original AABB, but the AABH will take less time to reject objects, because there are (usually) 3 checks instead of 4. 
 
 If you construct the AABH from the object's vertices instead, you can trivially reject more objects than an AABB can:
 
