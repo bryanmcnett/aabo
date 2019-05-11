@@ -152,6 +152,20 @@ k-DOP is different from the ideas in this paper, in the following ways:
 * A k-DOP does not have dual polyhedra if there exists a hemisphere that contains none of its axes. A 6DOP always has a hemisphere that contains no axes, and so there can not be dual polyhedra in a 6DOP. Nowhere can we find discussion of how choice of axes affects a k-DOP’s ability to have dual polyhedra (one of which can be used for a trivial rejection or acceptance test, in isolation.)
 * k-DOP is about opposing planes, and AABO is about opposing pairs of bounding polyhedra. a 6DOP doesn’t have opposing polyhedra - it has only one rectangular solid - but still qualifies as a k-DOP. An 8DOP can have opposing tetrahedra, but nowhere in literature can we find anyone mentioning this or making use of it, despite its large performance advantage.
 * k-DOP has faces aligned with [+-1,+-1,+-1] but AABO have axes that point at the vertices of a simplex
+* AABO is necessarily SOA (structure-of-arrays) for the algorithm to work, and 8DOP is AOS (array-of-structures) in all known code.  
+```
+struct Octahedra
+{ 
+  Tetrahedron *minABCD; // tetrahedrons that point up
+  Tetrahedron *maxABCD; // tetrahedrons that point down
+};
+
+struct EightDOP
+{
+  float min[4];
+  float max[4];
+};
+```
 
 Comparison To Bounding Sphere
 -----------------------------
@@ -159,9 +173,15 @@ Comparison To Bounding Sphere
 A bounding sphere has four scalar values - the same as an Axis Aligned Bounding Tetrahedron:
 
 ```
-struct AABB { float minX, minY, minZ, maxX, maxY, maxZ; }; // bounding box
-struct AABT { float A, B, C, D; }; // bounding tetrahedron
-struct BS { float x, y, z, radius; }; // bounding sphere
+struct Tetrahedron
+{ 
+  float A, B, C, D; 
+}; 
+
+struct Sphere
+{
+  float X, Y, Z, radius;
+};
 ```
 
 In terms of storage a sphere can be just as efficient as a tetrahedron, but a sphere-sphere check is inherently more expensive, as it requires multiplication and its expression has a deeper dependency graph than an AABB or AABT check.
