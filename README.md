@@ -218,6 +218,12 @@ The pragmatic axes look worse, and are worse, but still make triangles that encl
 
 ![Pre-existing AABB to AABO](images/pragmatic_post.png)
 
+At first, the three planes of a triangle are checked, and only if that check passes, two more planes are checked. The
+intersection of the five planes is identical to the four planes of a bounding box, but in most cases, only the first
+three planes will be checked.
+
+![Evolution of a 5-Sided AABB](images/5_sided_aabb.png)
+
 In 3D the above needs 7 planes, and is equivalent to a 3D AABB. In all tests I made, this *7-Sided AABB* outperforms
 the 6-Sided AABB, because it almost always stops after comparing 4 planes, instead of 6.
 
