@@ -40,8 +40,15 @@ We will work in two dimensions first, since it is simpler and extends trivially 
 In two dimensions, a simplex is a triangle. The following are data structures for an axis-aligned bounding box and axis-aligned bounding triangle in two dimensions:
 
 ```
-struct AABB { float minX, minY, maxX, maxY; };
-struct AABT { float minA, minB, minC; };
+struct Box
+{ 
+  float minX, minY, maxX, maxY; 
+}; 
+
+struct Triangle
+{ 
+  float A, B, C; 
+}; 
 ```
 
 2D AABB is well-understood. Here is an example of an object and its 2D AABB, where X bounds are red and Y are green:
