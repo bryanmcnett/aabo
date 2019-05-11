@@ -84,7 +84,7 @@ But if both min and max are stored in each object, an axis-aligned bounding hexa
 Axis-Aligned Bounding Hexagons
 ------------------------------
 
-The axis-aligned bounding hexagon (AABH) has six planes, which makes it 50% bigger than a 2D AABB with four planes: 
+The axis-aligned bounding hexagon (AABH) has six half-spaces, which makes it 50% bigger than a 2D AABB with four half-spaces: 
 
 ```
 struct Box
@@ -108,9 +108,9 @@ However, the hexagon has the nice property that it is made of two independent ax
 
 Therefore, If the minABC triangles are stored separately from the maxABC triangles (as above,) a bounding hexagon check is usually as cheap as a bounding triangle check, since the second triangle is rarely visited.
 
-No three of a 2D AABB's four planes describe a closed shape. If you were to try to do an intersection check with less than four of an AABB's planes, the shape would have infinite area. This is larger than the finite area of an AABH's first triangle. That is the essential advantage of AABH.
+No three of a 2D AABB's four half-spaces describe a closed shape. If you were to try to do an intersection check with less than four of an AABB's half-spaces, the shape would have infinite area. This is larger than the finite area of an AABH's first triangle. That is the essential advantage of AABH.
 
-For example, {minX, minY, maxX} is not a closed shape - it is unbounded in the direction of +Y. The same is true of any three of a 2D AABB's four values. The {minA, minB, minC} of an AABH, however, is always an equilateral triangle, which is a closed shape.
+For example, {minX, minY, maxX} is not a closed shape - it is unbounded in the direction of +Y. The same is true of any three of a 2D AABB's four half-spaces. The {minA, minB, minC} of an AABH, however, is always an equilateral triangle, which is a closed shape.
 
 AABH has a larger memory footprint than AABB, but (usually) uses less memory bandwidth and computation than AABB.
 
@@ -137,7 +137,7 @@ struct Octahedra
 };
 ```
 
-*AABO uses 33% more memory than AABB, but since only the one of the two tetrahedra need be read usually, an AABO check is usually four comparisons, while a 3D AABB check is six. AABO uses 33% less bandwidth and computation than AABB, and has 33% more planes than AABB, for making tighter bounding shapes.*
+*AABO uses 33% more memory than AABB, but since only the one of the two tetrahedra need be read usually, an AABO check is usually four comparisons, while a 3D AABB check is six. AABO uses 33% less bandwidth and computation than AABB, and has 33% more half-spaces than AABB, for making tighter bounding shapes.*
 
 Comparison to k-DOP
 -------------------
@@ -148,9 +148,9 @@ Christer Ericson’s book “Real-Time Collision Detection” has the following 
 
 k-DOP is different from the ideas in this paper, in the following ways:
 
-* An Axis-Aligned Bounding Simplex does not have opposing planes, so it is not a k-DOP
-* k-DOP is about opposing planes, and AABO is about opposing pairs of bounding polyhedra. a 6DOP doesn’t have opposing polyhedra - it has only one rectangular solid - but still qualifies as a k-DOP. An 8DOP *can* have opposing tetrahedra, but nowhere in literature can we find anyone mentioning this or making use of it, despite its large performance advantage.
-* A k-DOP does not have opposing polyhedra if there exists a hemisphere that contains none of its axes. Nowhere can we find discussion of how choice of axes affects a k-DOP’s ability to have opposing polyhedra, which is required to avoid reading half of an octahedron's planes most of the time.
+* An Axis-Aligned Bounding Simplex does not have opposing half-spaces, so it is not a k-DOP
+* k-DOP is about opposing half-spaces, and AABO is about opposing pairs of bounding polyhedra. a 6DOP doesn’t have opposing polyhedra - it has only one rectangular solid - but still qualifies as a k-DOP. An 8DOP *can* have opposing tetrahedra, but nowhere in literature can we find anyone mentioning this or making use of it, despite its large performance advantage.
+* A k-DOP does not have opposing polyhedra if there exists a hemisphere that contains none of its axes. Nowhere can we find discussion of how choice of axes affects a k-DOP’s ability to have opposing polyhedra, which is required to avoid reading half of an octahedron's half-spaces most of the time.
 * k-DOP has faces aligned with [+-1,+-1,+-1] but AABO have axes that point at the vertices of a simplex
 * AABO is necessarily SOA (structure-of-arrays) to avoid reading the maxABCD tetrahedron into memory unless it's needed, and 8DOP is AOS (array-of-structures) in all known code.  
 ```
@@ -209,7 +209,7 @@ C=-(X+Y)
 
 ![Pragmatic axes for Axis Aligned Bounding Triangle](images/pragmatic.png)
 
-The pragmatic axes look worse, and are worse, but still make triangles that enclose objects pretty well. With these axes, it is possible to construct an AABH from a pre-existing AABB, that has exactly the same shape as the AABB, and where the final plane check is unnecessary:
+The pragmatic axes look worse, and are worse, but still make triangles that enclose objects pretty well. With these axes, it is possible to construct an AABH from a pre-existing AABB, that has exactly the same shape as the AABB, and where the final half-space check is unnecessary:
 
 ```
 {minX, minY, -(maxX + maxY)}
@@ -220,14 +220,14 @@ The pragmatic axes look worse, and are worse, but still make triangles that encl
 
 This AABH won't trivially reject any more objects than the original AABB, but the AABH will take less time to reject objects, because there are (usually) 3 checks instead of 4. 
 
-At first, the three planes of a triangle are checked, and only if that check passes, two more planes are checked. The
-intersection of the five planes is identical to the four planes of a bounding box, but in most cases, only the first
-three planes will be checked.
+At first, the three half-spaces of a triangle are checked, and only if that check passes, two more half-spaces are checked. The
+intersection of the five half-spaces is identical to the four half-spaces of a bounding box, but in most cases, only the first
+three half-spaces will be checked.
 
 ![Evolution of a 5-Sided AABB](images/5_sided_aabb.png)
 
-In 3D the above needs 7 planes, and is equivalent to a 3D AABB. In all tests I made, this *7-Sided AABB* outperforms
-the 6-Sided AABB, because the "extra" "diagonal" 4th plane almost always prevents maxXYZ from being read.
+In 3D the above needs 7 half-spaces, and is equivalent to a 3D AABB. In all tests I made, this *7-Sided AABB* outperforms
+the 6-Sided AABB, because the "extra" "diagonal" 4th half-space almost always prevents maxXYZ from being read.
 
 If you construct the AABH from the object's vertices instead, you can trivially reject more objects than an AABB can:
 
