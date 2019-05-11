@@ -231,8 +231,8 @@ three half-spaces will be checked.
 
 ![Evolution of a 5-Sided AABB](images/5_sided_aabb.png)
 
-In 3D the above needs 7 half-spaces, and is equivalent to a 3D AABB. In all tests I made, this *7-Sided AABB* outperforms
-the 6-Sided AABB, because the "extra" "diagonal" 4th half-space almost always prevents maxXYZ from being read.
+*In 3D the above needs 7 half-spaces, and is equivalent to a 3D AABB. In all tests I made, this 7-Sided AABB outperforms
+the 6-Sided AABB. The 7th half-space - the diagonal one - serves no purpose, other than to prevent maxX, maxY, and maxZ from being read into memory. Once they are read into memory, it becomes superfluous, as above.*
 
 If you construct the AABH from the object's vertices instead, you can trivially reject more objects than an AABB can:
 
