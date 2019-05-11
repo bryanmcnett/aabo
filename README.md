@@ -1,4 +1,4 @@
-```
+r```
        Bounding Volume |  trivials |  trivials | accepts | seconds
 ------------------------------------------------------------------
           AABB MIN,MAX |         0 | 152349412 |   39229 | 4.7276
@@ -106,7 +106,7 @@ struct Hexagons
 
 However, the hexagon has the nice property that it is made of two independent axis-aligned bounding triangles (minABC and maxABC), and unless two hexagons are nearly overlapping, a check of one hexagon’s minABC triangle vs the other’s maxABC triangle (or vice versa) is sufficient for initial trivial intersection rejection. 
 
-Therefore, If the minABC triangles are stored separately from the maxABC triangles (as above,) a bounding hexagon check is usually as cheap as a bounding triangle check, since the second triangle is rarely needed.
+Therefore, If the minABC triangles are stored separately from the maxABC triangles (as above,) a bounding hexagon check is usually as cheap as a bounding triangle check, since the second triangle is rarely visited.
 
 No three of a 2D AABB's four planes describe a closed shape. If you were to try to do an intersection check with less than four of an AABB's planes, the shape would have infinite area. This is larger than the finite area of an AABH's first triangle. That is the essential advantage of AABH.
 
