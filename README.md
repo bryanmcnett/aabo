@@ -150,8 +150,11 @@ k-DOP is different from the ideas in this paper, in the following ways:
 
 * An Axis-Aligned Bounding Simplex does not have opposing half-spaces, so it is not a k-DOP; there is no such thing as a 4-DOP in 3D.
 * k-DOP is about opposing half-spaces, and AABO is about opposing bounding polyhedra. a 6-DOP doesn’t have opposing polyhedra - it has one rectangular solid - but still qualifies as a k-DOP. An 8-DOP *can* have opposing tetrahedra, but nowhere in literature can we find anyone mentioning this or making use of it, despite its large performance advantage.
-* A k-DOP can not have opposing polyhedra if all of its axes point into the same hemisphere. Almost always in literature, k-DOP axes have non-negative [X,Y,Z] values, which makes them point into the same hemisphere. Nowhere can we find discussion of how axis direction affects a k-DOP’s ability to have opposing polyhedra, which is required to avoid reading half of its data most of the time. The very idea that the axes +X and -X are distinct appears to be absent from k-DOP.
-* AABO is necessarily SOA (structure-of-arrays) to avoid reading the maxABCD tetrahedron into memory unless it's needed, and 8-DOP is AOS (array-of-structures) in all known code.  
+* A k-DOP can not have opposing polyhedra if all of its axes point into the same hemisphere. Almost always in literature, k-DOP axes have non-negative [X,Y,Z] values, which makes them point into the same hemisphere. Nowhere can we find discussion of how axis direction affects a k-DOP’s ability to have opposing polyhedra, which is required to avoid reading half of its data most of the time. 
+* For example, an 8-DOP in practice almost certainly has the axes [X, Y, Z, X+Y+Z] which can not be an AABO, because all four axes 
+point into the same hemisphere. The distinction between X+Y+Z and -(X+Y+Z) doesn't exist in k-DOP, to which the direction of an
+axis is irrelevant.
+* AABO is necessarily SOA (structure-of-arrays) to avoid reading the maxABCD tetrahedron into memory unless it's needed, and 8-DOP is AOS (array-of-structures) in all known c.  
 ```
 struct Octahedra
 { 
