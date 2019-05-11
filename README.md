@@ -76,13 +76,13 @@ That is why the data structure for an axis-aligned bounding triangle requires on
 
 ![A bounding triangle of minimum axis values](images/triangle_min.png)
 
-To perform a trivial rejection against a group of {minA, minB, minC} target objects, your probe object would need to have the form {maxA, maxB, maxC}:
+To perform a trivial rejection against a group of {minA, minB, minC} target objects, your query object would need to have the form {maxA, maxB, maxC}:
 
 ![A bounding triangle of maximum axis values](images/triangle_max.png)
 
-And for each rejection test, if the probe’s maxA < the object’s minA (or B or C), they do not intersect. This is true of the two above triangles: they do not intersect.
+And for each rejection test, if the query’s maxA < the object’s minA (or B or C), they do not intersect. This is true of the two above triangles: they do not intersect.
 
-There is no need for each object to store a {maxA, maxB, maxC} in addition to a {minA, minB, minC} simply to do intersection tests - only the probe needs {maxA, maxB, maxC}. So if we stop here, we have a novel bounding volume with roughly the same characteristics as AABB, but 25% cheaper in 2D and 33% cheaper in 3D than AABB.
+There is no need for each object to store a {maxA, maxB, maxC} in addition to a {minA, minB, minC} simply to do intersection tests - only the query needs {maxA, maxB, maxC}. So if we stop here, we have a novel bounding volume with roughly the same characteristics as AABB, but 25% cheaper in 2D and 33% cheaper in 3D than AABB.
 
 But if both min and max are stored in each object, an axis-aligned bounding hexagon appears: 
  
