@@ -13,7 +13,7 @@
        Octahedron SIMD |         0 |     67752 |   33793 | 1.7737
 ```
 
-The Axis-Aligned Bounding Octahedron and The 7-Sided AABB
+Axis-Aligned Bounding Octahedra and The 7-Sided AABB
 =========================================================
 
 >In computer graphics and computational geometry, a bounding volume for a set of objects is a closed 
@@ -114,8 +114,8 @@ For example, {minX, minY, maxX} is not a closed shape - it is unbounded in the d
 
 AABH has a larger memory footprint than AABB, but (usually) uses less memory bandwidth and computation than AABB.
 
-Axis-Aligned Bounding Octahedron
---------------------------------
+Axis-Aligned Bounding Octahedra
+-------------------------------
 
 Everything above extends trivially to three and higher dimensions. In three dimensions, an axis-aligned bounding box, axis-aligned bounding tetrahedron, and axis-aligned bounding octahedron have the following structure:
 
