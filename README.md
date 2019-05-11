@@ -132,12 +132,12 @@ struct Tetrahedron
 
 struct Octahedra
 { 
-  Tetrahedron *minABCD; // tetrahedrons that point up
-  Tetrahedron *maxABCD; // tetrahedrons that point down
+  Tetrahedron *minABCD; // tetrahedra that point up
+  Tetrahedron *maxABCD; // tetrahedra that point down
 };
 ```
 
-AABO uses 33% more memory than AABB, but since only the one of the two tetrahedra need be checked for initial trivial rejection, an AABO check is usually four comparisons, while a 3D AABB check is six. AABO uses 33% less bandwidth and computation than AABB, and has 33% more planes than AABB, for making tighter bounding shapes.
+*AABO uses 33% more memory than AABB, but since only the one of the two tetrahedra need be read usually, an AABO check is usually four comparisons, while a 3D AABB check is six. AABO uses 33% less bandwidth and computation than AABB, and has 33% more planes than AABB, for making tighter bounding shapes.*
 
 Comparison to k-DOP
 -------------------
@@ -149,21 +149,21 @@ Christer Ericson’s book “Real-Time Collision Detection” has the following 
 k-DOP is different from the ideas in this paper, in the following ways:
 
 * An Axis-Aligned Bounding Simplex does not have opposing planes, so it is not a k-DOP
-* A k-DOP does not have dual polyhedra if there exists a hemisphere that contains none of its axes. A 6DOP always has a hemisphere that contains no axes, and so there can not be dual polyhedra in a 6DOP. Nowhere can we find discussion of how choice of axes affects a k-DOP’s ability to have dual polyhedra (one of which can be used for a trivial rejection or acceptance test, in isolation.)
-* k-DOP is about opposing planes, and AABO is about opposing pairs of bounding polyhedra. a 6DOP doesn’t have opposing polyhedra - it has only one rectangular solid - but still qualifies as a k-DOP. An 8DOP can have opposing tetrahedra, but nowhere in literature can we find anyone mentioning this or making use of it, despite its large performance advantage.
+* k-DOP is about opposing planes, and AABO is about opposing pairs of bounding polyhedra. a 6DOP doesn’t have opposing polyhedra - it has only one rectangular solid - but still qualifies as a k-DOP. An 8DOP *can* have opposing tetrahedra, but nowhere in literature can we find anyone mentioning this or making use of it, despite its large performance advantage.
+* A k-DOP does not have opposing polyhedra if there exists a hemisphere that contains none of its axes. Nowhere can we find discussion of how choice of axes affects a k-DOP’s ability to have opposing polyhedra, which is required to avoid reading half of an octahedron's planes most of the time.
 * k-DOP has faces aligned with [+-1,+-1,+-1] but AABO have axes that point at the vertices of a simplex
 * AABO is necessarily SOA (structure-of-arrays) to avoid reading the maxABCD tetrahedron into memory unless it's needed, and 8DOP is AOS (array-of-structures) in all known code.  
 ```
 struct Octahedra
 { 
-  Tetrahedron *minABCD; // tetrahedrons that point up
-  Tetrahedron *maxABCD; // tetrahedrons that point down
+  Tetrahedron *minABCD; // tetrahedra that point up are in different cachelines than
+  Tetrahedron *maxABCD; // tetrahedra that point down
 };
 
 struct EightDOP
 {
-  float min[4];
-  float max[4];
+  float min[4]; // these 16 bytes are in the same cacheline as
+  float max[4]; // these 16 bytes.
 };
 ```
 
