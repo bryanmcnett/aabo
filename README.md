@@ -209,7 +209,7 @@ C=-(X+Y)
 
 ![Pragmatic axes for Axis Aligned Bounding Triangle](images/pragmatic.png)
 
-The pragmatic axes look worse, and are worse, but still make triangles that enclose objects pretty well. With these axes, it is possible to construct an AABH from a pre-existing AABB, that has exactly the same shape as the AABB, and where the 6th check is unnecessary:
+The pragmatic axes look worse, and are worse, but still make triangles that enclose objects pretty well. With these axes, it is possible to construct an AABH from a pre-existing AABB, that has exactly the same shape as the AABB, and where the final plane check is unnecessary:
 
 ```
 {minX, minY, -(maxX + maxY)}
@@ -217,6 +217,9 @@ The pragmatic axes look worse, and are worse, but still make triangles that encl
 ```
 
 ![Pre-existing AABB to AABO](images/pragmatic_post.png)
+
+In 3D the above needs 7 planes, and is equivalent to a 3D AABB. In all tests I made, this *7-Sided AABB* outperforms
+the 6-Sided AABB, because it almost always stops after comparing 4 planes, instead of 6.
 
 This AABH won't trivially reject any more objects than the original AABB, but the AABH will take less time to reject objects, because there are (usually) 3 checks instead of 4. 
 
