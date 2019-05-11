@@ -13,7 +13,7 @@
        Octahedron SIMD |         0 |     67752 |   33793 | 1.7737
 ```
 
-The Axis-Aligned Bounding Octahedron and The 7-sided AABB
+The Axis-Aligned Bounding Octahedron and The 7-Sided AABB
 =========================================================
 
 >In computer graphics and computational geometry, a bounding volume for a set of objects is a closed 
@@ -74,22 +74,34 @@ There is no need for each object to store a {maxA, maxB, maxC} in addition to a 
 
 But if both min and max are stored in each object, an axis-aligned bounding hexagon appears: 
  
-Axis-Aligned Bounding Hexagon
------------------------------
+Axis-Aligned Bounding Hexagons
+------------------------------
 
-The axis-aligned bounding hexagon (AABH) has six scalars, which makes it 50% bigger than an AABB with four: 
+The axis-aligned bounding hexagon (AABH) has six planes, which makes it 50% bigger than a 2D AABB with four planes: 
 
 ```
-struct AABB { float minX, minY, maxX, maxY; }; // bounding box
-struct AABT { float A, B, C; }; // bounding triangle
-struct AABH { AABT minABC, maxABC; }; // bounding hexagon
+struct Box
+{ 
+  float minX, minY, maxX, maxY; 
+}; 
+
+struct Triangle
+{ 
+  float A, B, C; 
+}; 
+
+struct Hexagons 
+{ 
+  Triangle *minABC; // triangles that point up
+  Triangle *maxABC; // triangles that point down
+};
 ```
 
 However, the hexagon has the nice property that it is made of two independent axis-aligned bounding triangles (minABC and maxABC), and unless two hexagons are nearly overlapping, a check of one hexagon’s minABC triangle vs the other’s maxABC triangle (or vice versa) is sufficient for initial trivial intersection rejection. 
 
-Therefore, If the minABC is stored in one place and the maxABC is stored somewhere else (in memory, on disk, etc.), a bounding hexagon check is usually as cheap as a bounding triangle check, since the second triangle is rarely read.
+Therefore, If the minABC triangles are stored separately from the maxABC triangles (as above,) a bounding hexagon check is usually as cheap as a bounding triangle check, since the second triangle is rarely needed.
 
-For a 2D AABB, no subset of its four values describes a closed shape, and so if you were to try to do initial trivial rejection with less than four values, the initial bounding object would have infinite area. This is larger than the finite area of an AABH's first triangle. That is the essential advantage of AABH.
+No three of a 2D AABB's four planes describe a closed shape. If you were to try to do an intersection check with less than four of an AABB's planes, the shape would have infinite area. This is larger than the finite area of an AABH's first triangle. That is the essential advantage of AABH.
 
 For example, {minX, minY, maxX} is not a closed shape - it is unbounded in the direction of +Y. The same is true of any three of a 2D AABB's four values. The {minA, minB, minC} of an AABH, however, is always an equilateral triangle, which is a closed shape.
 
@@ -101,13 +113,24 @@ Axis-Aligned Bounding Octahedron
 Everything above extends trivially to three and higher dimensions. In three dimensions, an axis-aligned bounding box, axis-aligned bounding tetrahedron, and axis-aligned bounding octahedron have the following structure:
 
 ```
-struct AABB { float minX, minY, minZ, maxX, maxY, maxZ; }; // bounding box
-struct AABT { float A, B, C, D; }; // bounding tetrahedron
-struct AABO { AABT minABCD, maxABCD; }; // bounding octahedron
+struct Box
+{ 
+  float minX, minY, minZ, maxX, maxY, maxZ; 
+}; 
+
+struct Tetrahedron
+{ 
+  float A, B, C, D; 
+}; 
+
+struct Octahedra
+{ 
+  Tetrahedron *minABCD; // tetrahedrons that point up
+  Tetrahedron *maxABCD; // tetrahedrons that point down
+};
 ```
 
-AABO uses 33% more memory than AABB, but since only the one of the two tetrahedra need be checked for initial trivial rejection, an AABO check is usually four comparisons, and a 3D AABB check is six. AABO uses 33% less bandwidth and computation than AABB, and has 33% more
-planes than AABB, for making tighter bounding shapes.
+AABO uses 33% more memory than AABB, but since only the one of the two tetrahedra need be checked for initial trivial rejection, an AABO check is usually four comparisons, while a 3D AABB check is six. AABO uses 33% less bandwidth and computation than AABB, and has 33% more planes than AABB, for making tighter bounding shapes.
 
 Comparison to k-DOP
 -------------------
