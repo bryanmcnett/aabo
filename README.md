@@ -28,7 +28,7 @@ There is a simpler bounding volume unknown to industry and literature. By virtue
 Half-Space
 ----------
 
-A closed half-space is a plane plus all of the space on one side of the plane. A bounding box is the intersection of six half-spaces, and a bounding tetrahedron is the intersection of four. 
+In 3D, a closed half-space is a plane plus all of the space on one side of the plane. A bounding box is the intersection of six half-spaces, and a bounding tetrahedron is the intersection of four. 
 
 Simplex
 -------
