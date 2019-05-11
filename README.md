@@ -160,7 +160,7 @@ struct Octahedra
   Tetrahedron *maxABCD; // tetrahedra that point down
 };
 
-struct EightDOP
+struct DOP8
 {
   float min[4]; // these 16 bytes are in the same cacheline as
   float max[4]; // these 16 bytes.
