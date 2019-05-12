@@ -97,7 +97,7 @@ struct Triangles
   UpTriangle *up; // giant array of triangles that point up
 };
 
-DownTriangle query; // a single triangle that points down, to test for intersections with the giant array
+DownTriangle query; // a single triangle that points down, to test for intersections
 ```
 
 But, if both {minA, minB, minC} and {maxA, maxB, maxC} *are* stored, an axis-aligned bounding hexagon appears: 
