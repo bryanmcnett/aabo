@@ -84,7 +84,7 @@ But, if both {minA, minB, minC} and {maxA, maxB, maxC} *are* stored, an axis-ali
 Axis-Aligned Bounding Hexagons
 ------------------------------
 
-The axis-aligned bounding hexagon (AABH) has six half-spaces, which makes it 50% bigger than a 2D AABB with four half-spaces: 
+The axis-aligned bounding hexagon has six half-spaces, which makes it 50% bigger than a 2D AABB with four half-spaces: 
 
 ```
 struct Box
@@ -108,11 +108,11 @@ However, the hexagon has the nice property that it is made of two independent ax
 
 Therefore, If the minABC triangles are stored separately from the maxABC triangles (as above,) a bounding hexagon check is usually as cheap as a bounding triangle check, since the second triangle is rarely visited.
 
-No three of a 2D AABB's four half-spaces describe a closed shape. If you were to try to do an intersection check with less than four of an AABB's half-spaces, the shape would have infinite area. This is larger than the finite area of an AABH's first triangle. That is the essential advantage of AABH.
+No three of a 2D AABB's four half-spaces describe a closed shape. If you were to try to do an intersection check with less than four of an AABB's half-spaces, the shape would have infinite area. This is larger than the finite area of an hexagon's first triangle. That is the essential advantage of the hexagon.
 
-For example, {minX, minY, maxX} is not a closed shape - it is unbounded in the direction of +Y. The same is true of any three of a 2D AABB's four half-spaces. The {minA, minB, minC} of an AABH, however, is always an equilateral triangle, which is a closed shape.
+For example, {minX, minY, maxX} is not a closed shape - it is unbounded in the direction of +Y. The same is true of any three of a 2D AABB's four half-spaces. The {minA, minB, minC} of a hexagon, however, is always an equilateral triangle, which is a closed shape.
 
-AABH has a larger memory footprint than AABB, but (usually) uses less memory bandwidth and computation than AABB.
+A hexagon has a larger memory footprint than an AABB, but (usually) uses less memory bandwidth and computation than AABB.
 
 Axis-Aligned Bounding Octahedra
 -------------------------------
@@ -210,7 +210,7 @@ C=-(X+Y)
 
 ![Pragmatic axes for Axis Aligned Bounding Triangle](images/pragmatic.png)
 
-The pragmatic axes look worse, and are worse, but still make triangles that enclose objects pretty well. With these axes, it is possible to construct an AABH from a pre-existing AABB, that has exactly the same shape as the AABB, and where the final half-space check is unnecessary:
+The pragmatic axes look worse, and are worse, but still make triangles that enclose objects pretty well. With these axes, it is possible to construct a hexagon from a pre-existing AABB, that has exactly the same shape as the AABB, and where the final half-space check is unnecessary:
 
 ```
 {minX, minY, -(maxX + maxY)}
@@ -219,7 +219,7 @@ The pragmatic axes look worse, and are worse, but still make triangles that encl
 
 ![Pre-existing AABB to AABO](images/pragmatic_post.png)
 
-This AABH won't trivially reject any more objects than the original AABB, but the AABH will take less time to reject objects, because there are (usually) 3 checks instead of 4. 
+This hexagon won't trivially reject any more objects than the original AABB, but the hexagon will take less time to reject objects, because there are (usually) 3 checks instead of 4. 
 
 At first, the three half-spaces of a triangle are checked, and only if that check passes, two more half-spaces are checked. The
 intersection of the five half-spaces is identical to the four half-spaces of a bounding box, but in most cases, only the first
@@ -230,7 +230,7 @@ three half-spaces will be checked.
 *In 3D the above needs 7 half-spaces, and is equivalent to a 3D AABB. In all tests I made, this 7-Sided AABB outperforms
 the 6-Sided AABB. The 7th half-space - the diagonal one - serves no purpose, other than to prevent maxX, maxY, and maxZ from being read into memory. Once they are read into memory, it becomes superfluous, as above.*
 
-If you construct the AABH from the object's vertices instead, you can trivially reject more objects than an AABB can:
+If you construct the hexagon from the object's vertices instead, you can trivially reject more objects than an AABB can:
 
 ```
 {minX, minY, -max(X+Y)}
@@ -239,7 +239,7 @@ If you construct the AABH from the object's vertices instead, you can trivially 
 
 ![Pragmatic axis AABO](images/pragmatic_pre.png)
 
-If it's unclear how AABH is superior to AABB when doing a 3 check initial trivial rejection test, the image below may help to 
+If it's unclear how a hexagon is superior to AABB when doing a 3 check initial trivial rejection test, the image below may help to 
 explain. Even if you were to do 3 checks first with an AABB, no matter which 3 of the 4 checks you pick, the resulting shape is not closed. It fails to exclude an infinite area from the rejection test. 
 
 ![Inifinite Volume](images/infinity.png)
