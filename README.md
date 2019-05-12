@@ -148,7 +148,7 @@ Therefore, If the minABC triangles are stored separately from the maxABC triangl
 bool Intersects(Hexagons world, int index, Hexagon query)
 {
   return Intersects(world.up[index], query.down) 
-      && Intersects(world.down[index], query.up); // this rarely executes
+      && Intersects(query.up, world.down[index]); // this rarely executes
 }
 ```
 
