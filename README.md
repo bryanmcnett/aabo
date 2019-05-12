@@ -6,7 +6,7 @@
             AABB X,Y,Z |  34310232 |   1154457 |   39229 | 4.1507
           7-Sided AABB |         0 |    172382 |   39229 | 3.0046
                   AABO |         0 |     67752 |   33793 | 2.1660
-           Tetrahedron |         0 |         0 |   67752 | 0.3200
+               Simplex |         0 |         0 |   67752 | 0.3200
 ```
 
 Axis-Aligned Bounding Octahedra and The 7-Sided AABB
