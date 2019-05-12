@@ -108,7 +108,7 @@ struct Triangles
 DownTriangle query; // a triangle that points down, to compare against
 ```
 
-But, if both {minA, minB, minC} and {maxA, maxB, maxC} *are* stored, an axis-aligned bounding hexagon appears: 
+But, if both {minA, minB, minC} and {maxA, maxB, maxC} *are* stored, their intersection is an axis-aligned bounding hexagon: 
 
 ![How two triangles make a hexagon](images/triangle_to_hexagon.png)
 
