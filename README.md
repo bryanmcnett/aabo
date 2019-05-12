@@ -1,11 +1,12 @@
 ```
-       Bounding Volume |  partial  |  partial  | accepts | seconds
-                       |  accepts  |  accepts  |         |        
+       Bounding Volume |   partial |   partial | accepts | seconds
+                       |   accepts |   accepts |         |        
 ------------------------------------------------------------------
-          AABB MIN,MAX |         0 | 152349412 |   39229 | 4.7276
-            AABB X,Y,Z |  34310232 |   1154457 |   39229 | 4.2566
-          7-Sided AABB |         0 |    172382 |   39229 | 2.9394
-                  AABO |         0 |     67752 |   33793 | 2.0796
+          AABB MIN,MAX |         0 | 152349412 |   39229 | 4.8294
+            AABB X,Y,Z |  34310232 |   1154457 |   39229 | 4.1507
+          7-Sided AABB |         0 |    172382 |   39229 | 3.0046
+                  AABO |         0 |     67752 |   33793 | 2.1660
+           Tetrahedron |         0 |         0 |   67752 | 0.3200
 ```
 
 Axis-Aligned Bounding Octahedra and The 7-Sided AABB
