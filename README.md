@@ -83,6 +83,11 @@ struct DownTriangle
 { 
   float maxA, maxB, maxC;
 }; 
+
+bool Intersects(UpTriangle u, DownTriangle d)
+{
+  return (u.minA <= d.maxA) && (u.minB <= d.maxB) && (u.minC <= d.maxC);
+}
 ```
 
 ![A bounding triangle of maximum axis values](images/triangle_max.png)
