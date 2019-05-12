@@ -223,7 +223,7 @@ int main(int argc, char* argv[])
   
   {
     const Clock clock;
-    int trivials = 0;
+    int partials = 0;
     int intersections = 0;
     for(int test = 0; test < kTests; ++test)
     {
@@ -236,7 +236,7 @@ int main(int argc, char* argv[])
         && objectMin.y <= queryMax.y
         && objectMin.z <= queryMax.z)
 	{
-	  ++trivials;
+	  ++partials;
 	  const float3 objectMax = aabbMax[t];
 	  if(queryMin.x <= objectMax.x
           && queryMin.y <= objectMax.y
@@ -247,7 +247,7 @@ int main(int argc, char* argv[])
     }
     const float seconds = clock.seconds();
     
-    printf(format, "AABB MIN,MAX", 0, trivials, intersections, seconds);
+    printf(format, "AABB MIN,MAX", 0, partials, intersections, seconds);
   }
 
   {
@@ -284,7 +284,7 @@ int main(int argc, char* argv[])
 
   {
     const Clock clock;
-    int trivials = 0;
+    int partials = 0;
     int intersections = 0;
     for(int test = 0; test < kTests; ++test)
     {
@@ -298,7 +298,7 @@ int main(int argc, char* argv[])
         && objectMin.c <= queryMax.c
         && objectMin.d <= queryMax.d)
         {
-	  ++trivials;
+	  ++partials;
 	  const float4 objectMax = sevenMax[t];
 	  if(queryMin.a <= objectMax.a
 	  && queryMin.b <= objectMax.b
@@ -311,12 +311,12 @@ int main(int argc, char* argv[])
     }
     const float seconds = clock.seconds();
     
-    printf(format, "7-Sided AABB", 0, trivials, intersections, seconds);
+    printf(format, "7-Sided AABB", 0, partials, intersections, seconds);
   }
 
   {
     const Clock clock;
-    int trivials = 0;
+    int partials = 0;
     int intersections = 0;    
     for(int test = 0; test < kTests; ++test)
     {
@@ -330,7 +330,7 @@ int main(int argc, char* argv[])
         && objectMin.c <= queryMax.c
         && objectMin.d <= queryMax.d)
         {
-	  ++trivials;
+	  ++partials;
 	  const float4 objectMax = aabtMax[t];
 	  if(queryMin.a <= objectMax.a
 	  && queryMin.b <= objectMax.b
@@ -344,8 +344,31 @@ int main(int argc, char* argv[])
     }
     const float seconds = clock.seconds();
     
-    printf(format, "AABO", 0, trivials, intersections, seconds);
+    printf(format, "AABO", 0, partials, intersections, seconds);
   }
 
+  {
+    const Clock clock;
+    int intersections = 0;    
+    for(int test = 0; test < kTests; ++test)
+    {
+      const float4 queryMax = aabtMax[test];
+      for(int t = 0; t < kObjects; ++t)
+      {
+        const float4 objectMin = aabtMin[t];
+        if(objectMin.a <= queryMax.a
+        && objectMin.b <= queryMax.b
+        && objectMin.c <= queryMax.c
+        && objectMin.d <= queryMax.d)
+        {
+          ++intersections;
+        }
+      }
+    }
+    const float seconds = clock.seconds();
+    
+    printf(format, "Tetrahedron", 0, 0, intersections, seconds);
+  }
+  
   return 0;
 }
