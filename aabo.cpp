@@ -367,7 +367,7 @@ int main(int argc, char* argv[])
     }
     const float seconds = clock.seconds();
     
-    printf(format, "Tetrahedron", 0, 0, intersections, seconds);
+    printf(format, "Simplex", 0, 0, intersections, seconds);
   }
   
   return 0;
