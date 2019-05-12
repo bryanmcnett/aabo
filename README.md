@@ -144,6 +144,14 @@ However, the hexagon has the nice property that it is made of two independent ax
 
 Therefore, If the minABC triangles are stored separately from the maxABC triangles (as above,) a bounding hexagon check is usually as cheap as a bounding triangle check, since the second triangle is rarely visited.
 
+```
+bool Intersects(Hexagons world, int index, Hexagon query)
+{
+  return Intersects(world.up[index], query.down) 
+      && Intersects(world.down[index], query.up); // this rarely executes
+}
+```
+
 No three of a 2D AABB's four half-spaces describe a closed shape. If you were to try to do an intersection check with less than four of an AABB's half-spaces, the shape would have infinite area. This is larger than the finite area of an hexagon's first triangle. That is the essential advantage of the hexagon.
 
 For example, {minX, minY, maxX} is not a closed shape - it is unbounded in the direction of +Y. The same is true of any three of a 2D AABB's four half-spaces. The {minA, minB, minC} of a hexagon, however, is always an equilateral triangle, which is a closed shape.
