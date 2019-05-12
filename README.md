@@ -155,7 +155,7 @@ how axis direction affects a k-DOP’s ability to have opposing polyhedra, which
 the time. 
 * For example, an 8-DOP in practice almost certainly has the axes [(1,0,0), (0,1,0), (0,0,1), (1,1,1)] which can not be an AABO, 
 because all four axes point into the same hemisphere. The distinction between (1,1,1) and -(1,1,1) doesn't exist in k-DOP, to which the direction of an axis is irrelevant.
-* AABO is necessarily SOA (structure-of-arrays) to avoid reading the maxABCD tetrahedron into memory unless it's needed, and 8-DOP is AOS (array-of-structures) in all known c.  
+* AABO is necessarily SOA (structure-of-arrays) to avoid reading the maxABCD tetrahedron into memory unless it's needed, and 8-DOP is AOS (array-of-structures) in all known implementations.  
 ```
 struct Octahedra
 { 
