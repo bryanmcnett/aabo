@@ -76,12 +76,12 @@ To perform intersection tests against a group of {minA, minB, minC} target objec
 ```
 struct UpTriangle
 { 
-  float minA, minB, minC
+  float minA, minB, minC;
 }; 
 
 struct DownTriangle
 { 
-  float maxA, maxB, maxC
+  float maxA, maxB, maxC;
 }; 
 ```
 
