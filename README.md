@@ -94,10 +94,10 @@ There is no need to store a {maxA, maxB, maxC} in addition to a {minA, minB, min
 ```
 struct Triangles
 {
-  UpTriangle *up; // giant array of axis-aligned bounding triangles
+  UpTriangle *up; // giant array of triangles that point up
 };
 
-DownTriangle query; // to test for intersection against that giant array of triangles
+DownTriangle query; // a single triangle that points down, to test for intersections with the giant array
 ```
 
 But, if both {minA, minB, minC} and {maxA, maxB, maxC} *are* stored, an axis-aligned bounding hexagon appears: 
