@@ -1,12 +1,7 @@
-       Bounding Volume |  trivials |  trivials | accepts | seconds
+       Bounding Volume |   partial |   partial | accepts | seconds
+                       |   accepts |   accepts |         |        
 ------------------------------------------------------------------
-          AABB MIN,MAX |         0 | 152349412 |   39229 | 4.7276
-            AABB X,Y,Z |  34310232 |   1154457 |   39229 | 4.2566
-           Tetrahedron |         0 |         0 |   67752 | 0.3066
-            Octahedron |         0 |     67752 |   33793 | 2.0796
-          7-Sided AABB |         0 |    172382 |   39229 | 2.9394
-
-6-Sided AABB XY,Z SIMD |         0 |   1154457 |   39229 | 1.8369
-6-Sided AABB Z,XY SIMD |         0 |  33819438 |   39229 | 2.5227
-     7-Sided AABB SIMD |         0 |    172382 |   39229 | 1.6998
-       Octahedron SIMD |         0 |     67752 |   33793 | 1.7737
+          AABB MIN,MAX |         0 | 152349412 |   39229 | 4.5226
+            AABB X,Y,Z |  34310232 |   1154457 |   39229 | 4.0035
+          7-Sided AABB |         0 |    172382 |   39229 | 2.8403
+                  AABO |         0 |     67752 |   33793 | 2.0274

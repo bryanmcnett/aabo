@@ -2,7 +2,6 @@
 #include <vector>
 #include <time.h>
 #include <math.h>
-#include <immintrin.h>
 
 struct Clock
 {
@@ -56,10 +55,9 @@ float3 max(const float3 a, const float3 b)
   return c;
 }
 
-union float4
+struct float4
 {
-  __m128 m;
-  struct { float a,b,c,d; };
+  float a,b,c,d;
 };
 
 float4 min(const float4 a, const float4 b)
@@ -217,7 +215,8 @@ int main(int argc, char* argv[])
 
   const char *title = "%22s | %9s | %9s | %7s | %7s\n";
 
-  printf(title, "Bounding Volume", "trivials", "trivials", "accepts", "seconds");
+  printf(title, "Bounding Volume", "partial", "partial", "accepts", "seconds");
+  printf(title, "", "accepts", "accepts", "", "");
   printf("------------------------------------------------------------------\n");
   
   const char *format = "%22s | %9d | %9d | %7d | %3.4f\n";
@@ -285,25 +284,34 @@ int main(int argc, char* argv[])
 
   {
     const Clock clock;
+    int trivials = 0;
     int intersections = 0;
     for(int test = 0; test < kTests; ++test)
     {
-      const float4 queryMax = aabtMax[test];
+      const float4 queryMin = sevenMin[test];
+      const float4 queryMax = sevenMax[test];
       for(int t = 0; t < kObjects; ++t)
       {
-        const float4 objectMin = aabtMin[t];
+        const float4 objectMin = sevenMin[t];
         if(objectMin.a <= queryMax.a
         && objectMin.b <= queryMax.b
         && objectMin.c <= queryMax.c
         && objectMin.d <= queryMax.d)
         {
-          ++intersections;
+	  ++trivials;
+	  const float4 objectMax = sevenMax[t];
+	  if(queryMin.a <= objectMax.a
+	  && queryMin.b <= objectMax.b
+          && queryMin.c <= objectMax.c)
+	  {
+	    ++intersections;
+	  }
         }
       }
     }
     const float seconds = clock.seconds();
     
-    printf(format, "Tetrahedron", 0, 0, intersections, seconds);
+    printf(format, "7-Sided AABB", 0, trivials, intersections, seconds);
   }
 
   {
@@ -336,167 +344,7 @@ int main(int argc, char* argv[])
     }
     const float seconds = clock.seconds();
     
-    printf(format, "Octahedron", 0, trivials, intersections, seconds);
-  }
-
-  {
-    const Clock clock;
-    int trivials = 0;
-    int intersections = 0;
-    for(int test = 0; test < kTests; ++test)
-    {
-      const float4 queryMin = sevenMin[test];
-      const float4 queryMax = sevenMax[test];
-      for(int t = 0; t < kObjects; ++t)
-      {
-        const float4 objectMin = sevenMin[t];
-        if(objectMin.a <= queryMax.a
-        && objectMin.b <= queryMax.b
-        && objectMin.c <= queryMax.c
-        && objectMin.d <= queryMax.d)
-        {
-	  ++trivials;
-	  const float4 objectMax = sevenMax[t];
-	  if(queryMin.a <= objectMax.a
-	  && queryMin.b <= objectMax.b
-          && queryMin.c <= objectMax.c)
-	  {
-	    ++intersections;
-	  }
-        }
-      }
-    }
-    const float seconds = clock.seconds();
-    
-    printf(format, "7-Sided AABB", 0, trivials, intersections, seconds);
-  }
-
-  printf("\n");
-
-  {
-    const Clock clock;
-    int trivials = 0;
-    int intersections = 0;
-    for(int test = 0; test < kTests; ++test)
-    {
-      float4 queryXY, queryZZ;
-      queryXY   = aabbXY[test];
-      queryZZ.m = _mm_loadu_ps((float*)aabbZZ + test * 2);
-
-      queryXY.m = _mm_sub_ps(_mm_setzero_ps(), queryXY.m);    
-      queryZZ.m = _mm_sub_ps(_mm_setzero_ps(), queryZZ.m);
-
-      queryXY.m = _mm_shuffle_ps(queryXY.m, queryXY.m, _MM_SHUFFLE(2,3,0,1));
-      queryZZ.m = _mm_shuffle_ps(queryZZ.m, queryZZ.m, _MM_SHUFFLE(0,1,0,1));
-      for(int t = 0; t < kObjects; ++t)
-      {
-        const float4 objectXY = aabbXY[t];
-        if(_mm_movemask_ps(_mm_cmplt_ps(queryXY.m, objectXY.m)) == 0x0)
-        {
-          ++trivials;
-	  float4 objectZZ;
-	  objectZZ.m = _mm_loadu_ps((float*)aabbZZ + t * 2);
-	  objectZZ.m = _mm_movelh_ps(objectZZ.m, objectZZ.m);
-	  if(_mm_movemask_ps(_mm_cmplt_ps(queryZZ.m, objectZZ.m)) == 0x0)
-	  {
-	      ++intersections;
-	  }
-	}
-      }
-    }
-    const float seconds = clock.seconds();
-    
-    printf(format, "6-Sided AABB XY,Z SIMD", 0, trivials, intersections, seconds);
-  }
-
-  {
-    const Clock clock;
-    int trivials = 0;
-    int intersections = 0;
-    for(int test = 0; test < kTests; ++test)
-    {
-      float4 queryXY, queryZZ;
-      queryXY   = aabbXY[test];
-      queryZZ.m = _mm_loadu_ps((float*)aabbZZ + test * 2);
-
-      queryXY.m = _mm_sub_ps(_mm_setzero_ps(), queryXY.m);    
-      queryZZ.m = _mm_sub_ps(_mm_setzero_ps(), queryZZ.m);
-
-      queryXY.m = _mm_shuffle_ps(queryXY.m, queryXY.m, _MM_SHUFFLE(2,3,0,1));
-      queryZZ.m = _mm_shuffle_ps(queryZZ.m, queryZZ.m, _MM_SHUFFLE(0,1,0,1));
-      for(int t = 0; t < kObjects; ++t)
-      {
-	  float4 objectZZ;
-	  objectZZ.m = _mm_loadu_ps((float*)aabbZZ + t * 2);
-	  objectZZ.m = _mm_movelh_ps(objectZZ.m, objectZZ.m);
-	  if(_mm_movemask_ps(_mm_cmplt_ps(queryZZ.m, objectZZ.m)) == 0x0)
-	  {
-            ++trivials;
-            const float4 objectXY = aabbXY[t];
-            if(_mm_movemask_ps(_mm_cmplt_ps(queryXY.m, objectXY.m)) == 0x0)
-            {
-	      ++intersections;
-	    }
-	  }
-      }
-    }
-    const float seconds = clock.seconds();
-    
-    printf(format, "6-Sided AABB Z,XY SIMD", 0, trivials, intersections, seconds);
-  }
-
-  {
-    const Clock clock;
-    int trivials = 0;
-    int intersections = 0;
-    for(int test = 0; test < kTests; ++test)
-    {
-      const float4 queryMin = sevenMin[test];
-      const float4 queryMax = sevenMax[test];
-      for(int t = 0; t < kObjects; ++t)
-      {
-        const float4 objectMin = sevenMin[t];
-        if(_mm_movemask_ps(_mm_cmplt_ps(queryMax.m, objectMin.m)) == 0x0)
-        {
-          ++trivials;
-	  const float4 objectMax = sevenMax[t];
-	  if(_mm_movemask_ps(_mm_cmplt_ps(objectMax.m, queryMin.m)) == 0x0)
-	  {
-	    ++intersections;
-	  }
-        }
-      }
-    }
-    const float seconds = clock.seconds();
-    
-    printf(format, "7-Sided AABB SIMD", 0, trivials, intersections, seconds);
-  }
-
-  {
-    const Clock clock;
-    int trivials = 0;
-    int intersections = 0;
-    for(int test = 0; test < kTests; ++test)
-    {
-      const float4 queryMin = aabtMin[test];
-      const float4 queryMax = aabtMax[test];
-      for(int t = 0; t < kObjects; ++t)
-      {
-        const float4 objectMin = aabtMin[t];
-        if(_mm_movemask_ps(_mm_cmplt_ps(queryMax.m, objectMin.m)) == 0x0)
-        {
-	  ++trivials;
-	  const float4 objectMax = aabtMax[t];
-	  if(_mm_movemask_ps(_mm_cmplt_ps(objectMax.m, queryMin.m)) == 0x0)
-	  {
-	    ++intersections;
-	  }
-        }
-      }
-    }
-    const float seconds = clock.seconds();
-    
-    printf(format, "Octahedron SIMD", 0, trivials, intersections, seconds);
+    printf(format, "AABO", 0, trivials, intersections, seconds);
   }
 
   return 0;
