@@ -55,7 +55,7 @@ struct Triangle
 
 ![A horse enclosed in a 2D AABB](images/horse_box.png)
 
-2D AABT (axis-aligned bounding triangle) is not as well known. It does not use the X and Y axes - it uses the three axes ABC, which could have the values {X, Y, -(X+Y)}, but for simplicity’s sake let’s say they are at 120 degree angles to each other:
+Axis-aligned bounding triangle is not as well known. It does not use the X and Y axes - it uses the three axes ABC, which could have the values {X, Y, -(X+Y)}, but for simplicity’s sake let’s say they are at 120 degree angles to each other:
 
 ![The ABC axes point at vertices of an equilateral triangle](images/abc_axes.png)
 
@@ -72,6 +72,18 @@ That is why the data structure for an axis-aligned bounding triangle requires on
 ![A bounding triangle of minimum axis values](images/triangle_min.png)
 
 To perform intersection tests against a group of {minA, minB, minC} target objects, your query object would need to have the form {maxA, maxB, maxC}:
+
+```
+struct UpTriangle
+{ 
+  float minA, minB, minC
+}; 
+
+struct DownTriangle
+{ 
+  float maxA, maxB, maxC
+}; 
+```
 
 ![A bounding triangle of maximum axis values](images/triangle_max.png)
 
@@ -92,15 +104,20 @@ struct Box
   float minX, minY, maxX, maxY; 
 }; 
 
-struct Triangle
+struct UpTriangle
 { 
-  float A, B, C; 
+  float minA, minB, minC;
+}; 
+
+struct DownTriangle
+{ 
+  float maxA, maxB, maxC;
 }; 
 
 struct Hexagons 
 { 
-  Triangle *minABC; // triangles that point up
-  Triangle *maxABC; // triangles that point down
+  UpTriangle   *up;   // triangles that point up, one per hexagon
+  DownTriangle *down; // triangles that point down, one per hexagon
 };
 ```
 
@@ -125,15 +142,20 @@ struct Box
   float minX, minY, minZ, maxX, maxY, maxZ; 
 }; 
 
-struct Tetrahedron
+struct UpTetrahedron
 { 
-  float A, B, C, D; 
+  float minA, minB, minC, minD;
+}; 
+
+struct DownTetrahedron
+{ 
+  float maxA, maxB, maxC, maxD;
 }; 
 
 struct Octahedra
 { 
-  Tetrahedron *minABCD; // tetrahedra that point up
-  Tetrahedron *maxABCD; // tetrahedra that point down
+  UpTetrahedron   *up;   // tetrahedra that point up, one per octahedron
+  DownTetrahedron *down; // tetrahedra that point down, one per octahedron
 };
 ```
 
@@ -186,11 +208,11 @@ struct Sphere
 };
 ```
 
-In terms of storage a sphere can be just as efficient as a tetrahedron, but a sphere-sphere check is inherently more expensive, as it requires multiplication and its expression has a deeper dependency graph than an AABB or AABT check.
+In terms of storage a sphere can be just as efficient as a tetrahedron, but a sphere-sphere check is inherently more expensive, as it requires multiplication and its expression has a deeper dependency graph than a polyhedron check.
 
 If the data are stored in very low precision such as uint8_t, the sphere-sphere check will overflow the data precision while performing its calculation, which necessitates expansion to a wider precision before performing the check.
 
-AABB has no such problem, and neither does AABT (triangle or tetrahedron.) Their runtime check requires only comparisons, which can be performed by individual machine instructions in a variety of data precisions.
+Polyhedra have no such problem. Their runtime check requires only comparisons, which can be performed by individual machine instructions in a variety of data precisions.
 
 A bounding sphere can have exactly one shape, but each AABO can be wide and flat, or tall and skinny, or roughly spherical, etc. So, in comparison to an AABO, a bounding sphere may not have very tight bounds. 
 
