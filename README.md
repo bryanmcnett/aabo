@@ -89,26 +89,15 @@ struct DownTriangle
 
 And for each test, if the query’s maxA < the object’s minA (or B or C), they do not intersect. This is true of the two above triangles: they do not intersect. 
 
-There is no need to store a {maxA, maxB, maxC} in addition to a {minA, minB, minC} simply to do intersection tests - only the query needs {maxA, maxB, maxC}. If we stop here, we have a novel bounding volume with roughly the same characteristics as AABB, but 25% cheaper in 2D and 33% cheaper in 3D than AABB. 
+There is no need to store a {maxA, maxB, maxC} in addition to a {minA, minB, minC} simply to do intersection tests - only the query needs {maxA, maxB, maxC}. If we stop here, we have a novel bounding volume with roughly the same characteristics as AABB, but 25% cheaper in 2D and 33% cheaper in 3D than AABB:
 
 ```
-struct UpTriangle
-{ 
-  float minA, minB, minC;
-}; 
-
-struct DownTriangle
-{ 
-  float maxA, maxB, maxC;
-}; 
-
 struct Triangles
 {
   UpTriangle *up; // giant array of axis-aligned bounding triangles
 };
 
 DownTriangle query; // to test for intersection against that giant array of triangles
-
 ```
 
 But, if both {minA, minB, minC} and {maxA, maxB, maxC} *are* stored, an axis-aligned bounding hexagon appears: 
