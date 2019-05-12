@@ -99,7 +99,7 @@ bool Intersects(UpTriangle u, DownTriangle d)
 }
 ```
 
-There is no need to store a {maxA, maxB, maxC} in addition to a {minA, minB, minC} simply to do intersection tests - only the query needs {maxA, maxB, maxC}. If we stop here, we have a novel bounding volume with roughly the same characteristics as AABB, but 25% cheaper in 2D and 33% cheaper in 3D than AABB:
+There is no need to store a {maxA, maxB, maxC} in addition to a {minA, minB, minC} simply to do intersection tests - only the query needs {maxA, maxB, maxC}. If we stop here, we have a novel bounding volume with roughly the same characteristics as AABB, but 25% cheaper in 2D and 33% cheaper in 3D than AABB. If your only concern is determining proximity and you don't care if it's a little rough, this is probably the best you can do.
 
 ```
 struct Triangles
