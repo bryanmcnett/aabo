@@ -180,14 +180,14 @@ the same hemisphere. This can not be an AABO: it does not form opposing polyhedr
 ```
 struct Octahedra
 { 
-  Tetrahedron *minABCD; // tetrahedra that point up are in different cachelines than
-  Tetrahedron *maxABCD; // tetrahedra that point down
+  UpTetrahedron   *up;   // tetrahedra that point up are in different cachelines than
+  DownTetrahedron *down; // tetrahedra that point down
 };
 
 struct DOP8
 {
-  float min[4]; // these 16 bytes are in the same cacheline as
-  float max[4]; // these 16 bytes.
+  float min[4]; // this isn't a tetrahedron, and it's in same cacheline as
+  float max[4]; // this, which also isn't a tetrahedron.
 };
 ```
 
