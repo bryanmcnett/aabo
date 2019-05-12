@@ -164,7 +164,7 @@ struct Octahedra
 Comparison to k-DOP
 -------------------
 
-Christer Ericson’s book “Real-Time Collision Detection” has the following to say about k-DOP, whose DOP8 is similar to Axis Aligned Bounding Octahedron:
+Christer Ericson’s book “Real-Time Collision Detection” has the following to say about k-DOP, whose 8-DOP is similar to Axis Aligned Bounding Octahedron:
 
 ![Christer Ericon's book, talking about k-DOP](images/kdop.png)
 
