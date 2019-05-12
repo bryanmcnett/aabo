@@ -93,7 +93,9 @@ And for each test, if the query’s maxA < the object’s minA (or B or C), they
 ```
 bool Intersects(UpTriangle u, DownTriangle d)
 {
-  return (u.minA <= d.maxA) && (u.minB <= d.maxB) && (u.minC <= d.maxC);
+  return (u.minA <= d.maxA) 
+      && (u.minB <= d.maxB) 
+      && (u.minC <= d.maxC);
 }
 ```
 
