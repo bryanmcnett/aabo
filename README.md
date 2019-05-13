@@ -149,6 +149,20 @@ For example, {minX, minY, maxX} is not a closed shape - it is unbounded in the d
 
 In 2D, a hexagon uses 6/4 the memory of AABB, but takes 3/4 as much energy to do an intersection check.
 
+And... a hexagon can do two flavors of triangle-hexagon intersection check, in addition to the hexagon-hexagon check:
+
+```
+bool Intersects(Hexagons world, int index, UpTriangle query)
+{
+  return Intersects(query, world.down[index]);
+}
+
+bool Intersects(Hexagons world, int index, DownTriangle query)
+{
+  return Intersects(world.up[index], query);
+}
+```
+
 Axis-Aligned Bounding Octahedra
 -------------------------------
 
@@ -189,8 +203,8 @@ Christer Ericson’s book “Real-Time Collision Detection” has the following 
 k-DOP is different from the ideas in this paper, in the following ways:
 
 * A tetrahedron doesn't have opposing half-spaces, so it is not a k-DOP; there is no such thing as a 4-DOP in 3D.
-* k-DOP is about opposing half-spaces, and AABO is about opposing tetrahedra. An 8-DOP *can* have opposing tetrahedra, but nowhere in literature can we find anyone mentioning this or making use of it, despite its large performance advantage.
-* A 8-DOP can not have opposing tetrahedra if all of its axes point into the same hemisphere. Almost always in literature, 8-DOP axes point into the same hemisphere. Nowhere can we find discussion of how axis direction affects an 8-DOP’s ability to have opposing tetrahedra, which is required to avoid reading the down tetrahedron most of the time.
+* 8-DOP is about four sets of opposing half-spaces, and AABO is about two opposing tetrahedra. An 8-DOP *can* have opposing tetrahedra, but nowhere in literature can we find anyone mentioning this or making use of it, despite its large performance advantage.
+* An 8-DOP can not have opposing tetrahedra if all of its axes point into the same hemisphere. Almost always in literature, 8-DOP axes point into the same hemisphere. Nowhere can we find discussion of how axis direction affects an 8-DOP’s ability to have opposing tetrahedra, which is required to avoid reading the down tetrahedron most of the time.
 * AABO is necessarily SOA (structure-of-arrays) to avoid reading the down tetrahedron into memory unless it's needed, and 8-DOP is AOS (array-of-structures) in all known implementations.  
 ```
 struct Octahedra
@@ -209,7 +223,7 @@ struct DOP8
 Comparison To Bounding Sphere
 -----------------------------
 
-A bounding sphere has four scalar values - the same as an Axis Aligned Bounding Tetrahedron:
+A bounding sphere has four scalar values - the same as a tetrahedron:
 
 ```
 struct Tetrahedron
