@@ -50,13 +50,13 @@ The points from the horse image above can each be projected onto the ABC axes, a
 
 ![A horse enclosed in opposing bounding triangles](images/horse_dual_triangle.png)
 
-Interestingly, however, {maxA, maxB, maxC} are not required to do an intersection test. {minA, minB, minC} define a triangle, so we can trivially reject against them in isolation:
+Interestingly, however, {maxA, maxB, maxC} are not required to do an intersection test. {minA, minB, minC} define a triangle, so we can use them in isolation as a bounding volume:
 
 ![A horse enclosed in opposing bounding triangles](images/horse_triangle.png)
 
 ![A bounding triangle of minimum axis values](images/triangle_min.png)
 
-To perform intersection tests against a group of objects bounded by {minA, minB, minC}, your query object would need to have the form {maxA, maxB, maxC}:
+To perform efficient intersection tests against a group of objects bounded by {minA, minB, minC}, your query object would need to be in the form {maxA, maxB, maxC}:
 
 ```
 struct UpTriangle
@@ -72,7 +72,7 @@ struct DownTriangle
 
 ![A bounding triangle of maximum axis values](images/triangle_max.png)
 
-And for each test, if the query’s maxA < the object’s minA (or B or C), they do not intersect. This is true of the two above triangles: they do not intersect. 
+When testing for intersection, if the query’s maxA < the object’s minA (or B or C), they do not intersect. The above two triangles don't intersect, because maxA < minA.
 
 ```
 bool Intersects(UpTriangle u, DownTriangle d)
