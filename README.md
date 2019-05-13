@@ -38,41 +38,25 @@ Axis-Aligned Bounding Triangle
 
 We will work in two dimensions first, since it is simpler and extends trivially to three dimensions and beyond.
 
-In two dimensions, a simplex is a triangle. The following are data structures for an axis-aligned bounding box and axis-aligned bounding triangle in two dimensions:
-
-```
-struct Box
-{ 
-  float minX, minY, maxX, maxY; 
-}; 
-
-struct Triangle
-{ 
-  float A, B, C; 
-}; 
-```
-
-2D AABB is well-understood. Here is an example of an object and its 2D AABB, where X bounds are red and Y are green:
+AABB is well-understood. Here is an example of an object and its 2D AABB, where X bounds are red and Y are green:
 
 ![A horse enclosed in a 2D AABB](images/horse_box.png)
 
-Axis-aligned bounding triangle is not as well known. It does not use the X and Y axes - it uses the three axes ABC, which could have the values {X, Y, -(X+Y)}, but for simplicity’s sake let’s say they are at 120 degree angles to each other:
+The axis-aligned bounding triangle is not as well known. It does not use the X and Y axes - it uses the three axes ABC, which could have the values {X, Y, -(X+Y)}, but for simplicity’s sake let’s say they are at 120 degree angles to each other:
 
 ![The ABC axes point at vertices of an equilateral triangle](images/abc_axes.png)
 
-The points from the horse image above can each be projected onto the ABC axes, and the minimum and maximum values for A, B, and C can be found, just as with AABB and XY:
+The points from the horse image above can each be projected onto the ABC axes, and the minimum and maximum values for A, B, and C can be found, just as with AABB and X, Y:
 
 ![A horse enclosed in opposing bounding triangles](images/horse_dual_triangle.png)
 
-Interestingly, however, it is possible to perform an intersection test without looking at both the min and max values, unlike with AABB. Because {minA, minB, minC} define a triangle, we can trivially reject against those three values in isolation, without considering {maxA, maxB, maxC}:
+Interestingly, however, {maxA, maxB, maxC} are not required to do an intersection test. {minA, minB, minC} define a triangle, so we can trivially reject against them in isolation:
 
 ![A horse enclosed in opposing bounding triangles](images/horse_triangle.png)
 
-That is why the data structure for an axis-aligned bounding triangle requires only (minA, minB, minC): in 2D, three values are sufficient to perform trivial intersection rejection tests:
-
 ![A bounding triangle of minimum axis values](images/triangle_min.png)
 
-To perform intersection tests against a group of {minA, minB, minC} target objects, your query object would need to have the form {maxA, maxB, maxC}:
+To perform intersection tests against a group of objects bounded by {minA, minB, minC}, your query object would need to have the form {maxA, maxB, maxC}:
 
 ```
 struct UpTriangle
