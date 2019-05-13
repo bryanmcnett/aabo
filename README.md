@@ -149,7 +149,7 @@ For example, {minX, minY, maxX} is not a closed shape - it is unbounded in the d
 
 In 2D, a hexagon uses 6/4 the memory of AABB, but takes 3/4 as much energy to do an intersection check.
 
-And... a hexagon can do two flavors of fast triangle-triangle intersection check, in addition to the hexagon-hexagon check:
+And... a hexagon can do two flavors of fast hexagon-triangle intersection check, in addition to hexagon-hexagon checks. None produce false negatives. An AABB offers nothing like that.
 
 ```
 bool Intersects(Hexagons world, int index, UpTriangle query)
