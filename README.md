@@ -50,13 +50,13 @@ The points from the horse image above can each be projected onto the ABC axes, a
 
 ![A horse enclosed in opposing bounding triangles](images/horse_dual_triangle.png)
 
-Interestingly, however, {maxA, maxB, maxC} are not required to do an intersection test. {minA, minB, minC} define a triangle, so we can use them in isolation as a bounding volume:
+Interestingly, however, {maxA, maxB, maxC} are not required to do an intersection test. {minA, minB, minC} define an upward-pointing triangle, so we can use that in isolation as a bounding volume:
 
 ![A horse enclosed in opposing bounding triangles](images/horse_triangle.png)
 
 ![A bounding triangle of minimum axis values](images/triangle_min.png)
 
-To perform efficient intersection tests against a group of objects bounded by {minA, minB, minC}, your query object would need to be in the form {maxA, maxB, maxC}:
+To perform efficient intersection tests against a group of objects bounded by {minA, minB, minC}, your query object would need to be in the form of {maxA, maxB, maxC}, which defines a downward-pointing triangle:
 
 ```
 struct UpTriangle
@@ -72,7 +72,7 @@ struct DownTriangle
 
 ![A bounding triangle of maximum axis values](images/triangle_max.png)
 
-When testing for intersection, if the query’s maxA < the object’s minA (or B or C), they do not intersect. The above two triangles don't intersect, because maxA < minA.
+When testing for intersection, if the down triangle's maxA < the up triangle's minA (or B or C), the triangles do not intersect. The above triangles don't intersect, because maxA < minA.
 
 ```
 bool Intersects(UpTriangle u, DownTriangle d)
@@ -83,7 +83,7 @@ bool Intersects(UpTriangle u, DownTriangle d)
 }
 ```
 
-There is no need to store a {maxA, maxB, maxC} in addition to a {minA, minB, minC} simply to do intersection tests - only the query needs {maxA, maxB, maxC}. If we stop here, we have a novel bounding volume with roughly the same characteristics as AABB, but 25% cheaper in 2D and 33% cheaper in 3D than AABB. If your only concern is determining proximity and you don't care if it's a little rough, this is probably the best you can do.
+If we stop here, we have a novel bounding volume with roughly the same characteristics as AABB, but needing 3 instead of 4 values in 2D, and 4 instead of 6 values in 3D, 5 instead of 8 in 4D, etc. If your only concern is determining proximity and you don't care if the bounding volume is tight, this is probably the best you can do.
 
 ```
 struct Triangles
@@ -91,10 +91,15 @@ struct Triangles
   UpTriangle *up; // triangles that point up
 };
 
-DownTriangle query; // a triangle that points down, to compare against
+bool Intersects(Triangles world, int index, DownTriangle query)
+{
+  return Intersects(world.up[index], query);
+}
 ```
 
-But, if both {minA, minB, minC} and {maxA, maxB, maxC} *are* stored, their intersection is an axis-aligned bounding hexagon: 
+We can layer on another set of triangles to get even tighter bounds than AABB, while remaining faster than AABB.
+And, since the first layer remains, we can continue to do fast intersections with it alone when speed is most important.
+By adding another layer of triangles pointing down, we create axis-aligned bounding hexagons:
 
 ![How two triangles make a hexagon](images/triangle_to_hexagon.png)
 
