@@ -177,7 +177,7 @@ struct Octahedra
 };
 ```
 
-*AABO uses 33% more memory than AABB, but since only one of the two tetrahedra need be read usually, an AABO check is usually four comparisons, while a 3D AABB check is six. AABO uses 33% less bandwidth and computation than AABB, and has 33% more half-spaces than AABB, for making tighter bounding shapes.*
+*AABO uses 8/6 the memory of an AABB, but since only one of the two tetrahedra need be read usually, an AABO check uses 4/6 the energy of an AABB check. And an AABO has 8/6 the planes, for making a tighter bounding volume.*
 
 Comparison to k-DOP
 -------------------
