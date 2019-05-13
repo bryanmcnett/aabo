@@ -189,12 +189,9 @@ Christer Ericson’s book “Real-Time Collision Detection” has the following 
 k-DOP is different from the ideas in this paper, in the following ways:
 
 * An Axis-Aligned Bounding Simplex does not have opposing half-spaces, so it is not a k-DOP; there is no such thing as a 4-DOP in 3D.
-* k-DOP is about opposing half-spaces, and AABO is about opposing bounding polyhedra. a 6-DOP doesn’t have opposing polyhedra - it has one rectangular solid - but still qualifies as a k-DOP. An 8-DOP *can* have opposing tetrahedra, but nowhere in literature can we find anyone mentioning this or making use of it, despite its large performance advantage.
-* A k-DOP can not have opposing polyhedra if all of its axes point into the same hemisphere. Almost always in literature, k-DOP axes have non-negative X,Y,Z values where possible, which makes them point into the same hemisphere. Nowhere can we find discussion of how axis direction affects a k-DOP’s ability to have opposing polyhedra, which is required to avoid reading
-half of its data most of the time. 
-* For example, an 8-DOP likely has the axes [(1,0,1), (-1,0,1), (0,1,1), (0,-1,1)] which all point in +Z, and therefore
-the same hemisphere. This can not be an AABO: it does not form opposing polyhedra.
-* AABO is necessarily SOA (structure-of-arrays) to avoid reading the maxABCD tetrahedron into memory unless it's needed, and 8-DOP is AOS (array-of-structures) in all known implementations.  
+* k-DOP is about opposing half-spaces, and AABO is about opposing tetrahedra. An 8-DOP *can* have opposing tetrahedra, but nowhere in literature can we find anyone mentioning this or making use of it, despite its large performance advantage.
+* A 8-DOP can not have opposing tetrahedra if all of its axes point into the same hemisphere. Almost always in literature, 8-DOP axes point into the same hemisphere. Nowhere can we find discussion of how axis direction affects an 8-DOP’s ability to have opposing tetrahedra, which is required to avoid reading the down tetrahedron most of the time.
+* AABO is necessarily SOA (structure-of-arrays) to avoid reading the down tetrahedron into memory unless it's needed, and 8-DOP is AOS (array-of-structures) in all known implementations.  
 ```
 struct Octahedra
 { 
