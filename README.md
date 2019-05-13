@@ -220,8 +220,8 @@ struct Octahedra
 
 struct DOP8
 {
-  float min[4]; // not a tetrahedron, in same cacheline as
-  float max[4]; // this, which isn't a tetrahedron.
+  float min[4]; // maybe not a tetrahedron, in same cacheline as
+  float max[4]; // this, which maybe isn't a tetrahedron.
 };
 ```
 
