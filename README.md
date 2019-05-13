@@ -131,9 +131,9 @@ struct Hexagons
 };
 ```
 
-However, the hexagon has the nice property that it is made of two independent axis-aligned bounding triangles (minABC and maxABC), and unless two hexagons are nearly overlapping, a check of one hexagon’s minABC triangle vs the other’s maxABC triangle (or vice versa) is sufficient for initial trivial intersection rejection. 
+However, the hexagon has the nice property that it is made of an up and down triangle, each of which can be used in isolation for a faster intersection check. And, when checking one hexagon against another for intersection, unless they are almost overlapping, one triangle test is sufficient to determine that the hexagons don't intersect.  
 
-Therefore, If the minABC triangles are stored separately from the maxABC triangles (as above,) a bounding hexagon check is usually as cheap as a bounding triangle check, since the second triangle is rarely visited.
+Therefore, except in cases where hexagons almost overlap, a hexagon-hexagon check has the same cost as a triangle-triangle check.
 
 ```
 bool Intersects(Hexagons world, int index, Hexagon query)
@@ -143,11 +143,11 @@ bool Intersects(Hexagons world, int index, Hexagon query)
 }
 ```
 
-No three of a 2D AABB's four half-spaces describe a closed shape. If you were to try to do an intersection check with less than four of an AABB's half-spaces, the shape would have infinite area. This is larger than the finite area of an hexagon's first triangle. That is the essential advantage of the hexagon.
+No three of a 2D AABB's four half-spaces define a closed shape. If you were to try to check for intersection with less than four of an AABB's half-spaces, the shape defined by the half-spaces would have infinite area. This is larger than the finite area of an hexagon's first triangle. That is the essential advantage of the hexagon.
 
-For example, {minX, minY, maxX} is not a closed shape - it is unbounded in the direction of +Y. The same is true of any three of a 2D AABB's four half-spaces. The {minA, minB, minC} of a hexagon, however, is always an equilateral triangle, which is a closed shape.
+For example, {minX, minY, maxX} is not a closed shape - it is unbounded in the direction of +Y. The same is true of any three of a 2D AABB's four half-spaces. The {minA, minB, minC} of a hexagon, however, is always an equilateral triangle, and so is {maxA, maxB, maxC}.
 
-A hexagon has a larger memory footprint than an AABB, but (usually) uses less memory bandwidth and computation than AABB.
+In 2D, a hexagon uses 6/4 the memory of AABB, but takes 3/4 as much energy to do an intersection check.
 
 Axis-Aligned Bounding Octahedra
 -------------------------------
