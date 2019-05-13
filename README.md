@@ -200,6 +200,10 @@ Christer Ericson’s book “Real-Time Collision Detection” has the following 
 
 ![Christer Ericon's book, talking about k-DOP](images/kdop.png)
 
+k-DOP is similar to the ideas in this paper, in the following ways:
+
+* Every AABO is also expressible as an 8-DOP, which has the same octahedral shape.
+
 k-DOP is different from the ideas in this paper, in the following ways:
 
 * A tetrahedron doesn't have opposing half-spaces, so it is not a k-DOP; there is no such thing as a 4-DOP in 3D.
