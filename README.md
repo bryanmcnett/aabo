@@ -99,7 +99,7 @@ bool Intersects(Triangles world, int index, DownTriangle query)
 
 We can layer on another set of triangles to get even tighter bounds than AABB, while remaining faster than AABB.
 And, since the first layer remains, we can continue to do fast intersections with it alone when speed is most important.
-In addition to the up-pointing triangle bounding volume, we can have a down-pointing triangle bounding volume, and the intersection defines an axis-aligned bounding hexagon:
+In addition to the up-pointing bounding triangle, we can have a down-pointing bounding triangle, and the intersection defines an axis-aligned bounding hexagon:
 
 ![How two triangles make a hexagon](images/triangle_to_hexagon.png)
 
