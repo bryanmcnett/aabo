@@ -209,7 +209,7 @@ k-DOP is different from the ideas in this paper, in the following ways:
 * A tetrahedron doesn't have opposing half-spaces, so it is not a k-DOP; there is no such thing as a 4-DOP in 3D.
 * 8-DOP is four sets of opposing half-spaces, and AABO is two opposing tetrahedra. An 8-DOP *can* have opposing tetrahedra, but nowhere in literature can we find anyone mentioning this or making use of it, despite its large performance advantage.
 * An 8-DOP can not have opposing tetrahedra if all of its axes point into the same hemisphere. Nowhere can we find discussion of how axis direction affects an 8-DOP’s ability to have opposing tetrahedra, which is required to avoid reading the down tetrahedron most of the time.
-* A good example of this is the hexagonal prism, which is an 8-DOP but can not be an AABO.
+* A good example of this is the [hexagonal prism](http://www.github.com/bryanmcnett/hexprism), which is an 8-DOP but can not be an AABO.
 * AABO is necessarily SOA (structure-of-arrays) to avoid reading the down tetrahedron into memory unless it's needed, and 8-DOP is AOS (array-of-structures) in all known implementations.  
 ```
 struct Octahedra
@@ -300,3 +300,9 @@ If it's unclear how a hexagon is superior to AABB when doing a 3 check initial t
 explain. Even if you were to do 3 checks first with an AABB, no matter which 3 of the 4 checks you pick, the resulting shape is not closed. It fails to exclude an infinite area from the rejection test. 
 
 ![Inifinite Volume](images/infinity.png)
+
+Further Reading
+---------------
+
+If you liked this paper, but suspect that a tetrahedron is a poor bounding volume for the skyscraper in your videogame, 
+you are correct! For you, there is this paper, instead: [Hexagonal Prism](http://www.github.com/bryanmcnett/hexprism)
