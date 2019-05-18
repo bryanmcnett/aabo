@@ -242,11 +242,11 @@ struct Sphere
 };
 ```
 
-In terms of storage a sphere can be just as efficient as a tetrahedron, but a sphere-sphere check is inherently more expensive, as it requires multiplication and its expression has a deeper dependency graph than a polyhedron check.
+In terms of storage a sphere can be just as efficient as a tetrahedron, but a sphere-sphere check is inherently more expensive, as it requires multiplication and its expression has a deeper dependency graph than a convex polyhedron check.
 
 If the data are stored in very low precision such as uint8_t, the sphere-sphere check will overflow the data precision while performing its calculation, which necessitates expansion to a wider precision before performing the check.
 
-Polyhedra have no such problem. Their runtime check requires only comparisons, which can be performed by individual machine instructions in a variety of data precisions.
+Convex polyhedra have no such problem. Their runtime check requires only comparisons, which can be performed by individual machine instructions in a variety of data precisions.
 
 A bounding sphere can have exactly one shape, but each AABO can be wide and flat, or tall and skinny, or roughly spherical, etc. So, in comparison to an AABO, a bounding sphere may not have very tight bounds. 
 
