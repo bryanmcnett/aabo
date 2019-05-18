@@ -210,7 +210,7 @@ k-DOP is different from the ideas in this paper, in the following ways:
 * 8-DOP is four sets of opposing half-spaces, and AABO is two opposing tetrahedra. An 8-DOP *can* have opposing tetrahedra, but nowhere in literature can we find anyone mentioning this or making use of it, despite its large performance advantage.
 * An 8-DOP can not have opposing tetrahedra if all of its axes point into the same hemisphere. Nowhere can we find discussion of how axis direction affects an 8-DOP’s ability to have opposing tetrahedra, which is required to avoid reading 50% of its data.
 * A good example of this is the [hexagonal prism](http://www.github.com/bryanmcnett/hexprism), which is an 8-DOP but can not be an AABO.
-* AABO is necessarily SOA (structure-of-arrays) to avoid reading the down tetrahedron into memory unless it's needed, and 8-DOP is AOS (array-of-structures) in all known implementations.  
+* AABO is necessarily SOA (structure-of-arrays) to avoid reading 50% of data into memory unless it's needed, and 8-DOP is AOS (array-of-structures) in all known implementations.  
 ```
 struct Octahedra
 { 
