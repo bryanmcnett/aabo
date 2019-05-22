@@ -260,16 +260,25 @@ These two problems are worse in combination, but that's OK for AABO
 In cases where probability of slab intersection is a few percent, *and* degree of SIMD is 8 or more, their effects combine
 to make the initial slab check ineffective. In these cases, AABO can fall back on its initial tetrahedron check:
 ```
+bool Intersects(AABBs world, AABB query)
+{
+  if(objects+query are small and/or SIMD is low)
+    return IntersectSlabs(world, query);
+  else
+    return IntersectSlabs(world, query); // tough luck!
+}
+
 bool Intersects(Octahedra world, Octahedron query)
 {
-  if(objects+query are large or SIMD is high)
-    return IntersectsTetrahedra(Octahedra world, Octahedron query);
+  if(objects+query are small and/or SIMD is low)
+    return IntersectSlabs(world, query);
   else
-    return IntersectsSlabs(Octahedra world, Octahedron query);
+    return IntersectTetrahedra(world, query);
 }
 ```
-AABB can not choose an alternate strategy for when the initial slab check is slow. And, AABO is never slower than AABB at doing
-an initial slab check. So, we can say that in SoA, AABO is never worse than AABB, and sometimes better.
+AABB can not choose an alternate strategy for when the initial slab check isn't worth doing. 
+And, AABO is never slower than AABB at doing an initial slab check.
+So, we can say that in SoA, AABO is never worse than AABB, and sometimes better.
 
 Comparison to k-DOP
 -------------------
