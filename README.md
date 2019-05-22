@@ -254,11 +254,11 @@ The slab test can avoid doing 4 plane tests, only when all SIMD lanes report no 
 there are 64 SIMD lanes. For all of them to report no intersection with a slab 10% likely to intersect, the probability is
 pow(0.9,64) or 0.00117901845. That makes for an average of 5.99 plane tests, more than the AABO's initial tetrahedron test of 4.
 
-This is OK, because AABO can choose freely between initial slab check and initial tetrahedron check
----------------------------------------------------------------------------------------------------
+These two problems are worse in combination, but that's OK for AABO
+-------------------------------------------------------------------
 
-In cases where a slab check is less effective, such as when objects and query are large, or when the degree of SIMD is high,
-AABO can fall back on the tetrahedron check, whose 4 planes beats an AABB's 6:
+In cases where probability of slab intersection is a few percent, *and* degree of SIMD is 8 or more, their effects combine
+to make the initial slab check ineffective. In these cases, AABO can fall back on its initial tetrahedron check:
 ```
 bool Intersects(Octahedra world, Octahedron query)
 {
@@ -268,7 +268,7 @@ bool Intersects(Octahedra world, Octahedron query)
     return IntersectsSlabs(Octahedra world, Octahedron query);
 }
 ```
-AABB can not choose an alternate strategy for when the intiial slab check is slow. And, AABO is never slower than AABB at doing
+AABB can not choose an alternate strategy for when the initial slab check is slow. And, AABO is never slower than AABB at doing
 an initial slab check. So, we can say that in SoA, AABO is never worse than AABB, and sometimes better.
 
 Comparison to k-DOP
