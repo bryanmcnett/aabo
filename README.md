@@ -193,6 +193,84 @@ struct Octahedra
 
 *AABO uses 8/6 the memory of an AABB, but since only one of the two tetrahedra need be read usually, an AABO check uses 4/6 the energy of an AABB check. And an AABO has 8/6 the planes, for making a tighter bounding volume.*
 
+So Far We've Talked About AoS, but what about SoA?
+--------------------------------------------------
+
+If your data is in an AoS (Array of Structures) (e.g. struct AABB{ vec3 min, max };) and your code is anywhere near data-bound,
+as it should be if performance is your concern, AABB will use 50% more energy to intersect than AABO, as explored above.
+
+But what about the case of SoA (Structure of Arrays)? It's possible with AABB to organize data like so:
+```
+struct AABBs
+{
+  vector *minX, *minY, *minZ;
+  vector *maxX, *maxY, *maxZ;
+}:
+int Intersects(AABBs world, int index, AABB query)
+{
+  return all_lessequal(world.minX[index], query.maxX)
+      && all_lessequal(query.minX, world.maxX[index])
+      && all_lessequal(world.minY[index], query.maxY) // rarely executes
+      && all_lessequal(query.minY, world.maxY[index])
+      && all_lessequal(world.minZ[index], query.maxZ)
+      && all_lessequal(query.minZ, world.maxZ[index]);
+}
+```
+The above "initial slab check" is a pretty good idea when objects and queries are small compared to the search space. AABO can do the same, and gets the same advantage as AABB when it does. We are not comparing opposing tetrahedra in this case, however - we're comparing opposing planes, just like AABB always does:
+```
+struct Octahedra
+{
+  vector *minA, *minB, *minC, *maxD;
+  vector *maxA, *maxB, *maxC, *maxD;
+}:
+int Intersects(Octahedra world, int index, Octahedron query)
+{
+  return all_lessequal(world.minA[index], query.maxA)
+      && all_lessequal(query.minA, world.maxA[index])
+      && all_lessequal(world.minB[index], query.maxB) // rarely executes
+      && all_lessequal(query.minB, world.maxB[index])
+      && all_lessequal(world.minC[index], query.maxC)
+      && all_lessequal(query.minC, world.maxC[index]);
+}
+```
+You could continue to test the D planes, at very slightly higher cost, but at this point you're unlikely to fail any more 
+intersections. The six-sided shape enclosed by the ABC planes encloses space, and testing D merely "cuts off two corners" of it.
+
+When it is advantageous to initially test a slab in one dimension for intersection, AABB and AABO are very nearly identical, and
+produce identical code. But, it is not always advantageous to do the initial slab test.
+
+When object and query are big compared to world, initial slab check is bad
+--------------------------------------------------------------------------
+
+The slab test avoids doing 4 plane tests, so when it is 100% effective AABB is just as good as AABO. But, it is not effective
+when the probability of an object intersecting the slab is high. When it is 90% likely for an object to intersect the slab,
+then the slab test has only a 10% chance of avoiding 4 plane tests, which means on average 0.4 tests are avoided, for an average of
+5.6 plane tests per object. This is more expensive than an AABO's initial tetrahedron, with 4 plane tests.
+
+When target platform has high degree of SIMD, initial slab check is bad
+-----------------------------------------------------------------------
+
+The slab test can avoid doing 4 plane tests, only when all SIMD lanes report no slab intersection. On platforms such as GCN
+there are 64 SIMD lanes. For all of them to report no intersection with a slab 10% likely to intersect, the probability is
+pow(0.9,64) or 0.00117901845. That makes for an average of 5.99 plane tests, more than the AABO's initial tetrahedron test of 4.
+
+This is OK, because AABO can choose freely between initial slab check and initial tetrahedron check
+---------------------------------------------------------------------------------------------------
+
+In cases where a slab check is less effective, such as when objects and query are large, or when the degree of SIMD is high,
+AABO can fall back on the tetrahedron check, whose 4 planes beats an AABB's 6:
+```
+bool Intersects(Octahedra world, Octahedron query)
+{
+  if(objects+query are large or SIMD is high)
+    return IntersectsTetrahedra(Octahedra world, Octahedron query);
+  else
+    return IntersectsSlabs(Octahedra world, Octahedron query);
+}
+```
+AABB can not choose an alternate strategy for when the intiial slab check is slow. And, AABO is never slower than AABB at doing
+an initial slab check. So, we can say that in SoA, AABO is never worse than AABB, and sometimes better.
+
 Comparison to k-DOP
 -------------------
 
