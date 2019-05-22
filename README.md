@@ -233,11 +233,11 @@ int Intersects(Octahedra world, int index, Octahedron query)
       && all_lessequal(query.minC, world.maxC[index]);
 }
 ```
-You could continue to test the D planes, at very slightly higher cost, but at this point you're unlikely to fail any more 
-intersections. The six-sided shape enclosed by the ABC planes encloses space, and testing D merely "cuts off two corners" of it.
+You could continue to test the D planes, at very slightly higher cost, only if the initial bounding rhombohedron test passes. In
+the case of axes ABCD = {X, Y, Z, -(X+Y+Z)} the rhombohedron *is* an AABB, and the Octahedron slab test *is* an AABB test.
 
-When it is advantageous to initially test a slab in one dimension for intersection, AABB and AABO are very nearly identical, and
-produce identical code. But, it is not always advantageous to do the initial slab test.
+When it is advantageous to initially test a slab in one dimension for intersection, AABB and AABO act identically, and
+produce identical code. But, it is not always advantageous to do the initial slab test!
 
 When object and query are big compared to world, initial slab check is bad
 --------------------------------------------------------------------------
@@ -263,17 +263,17 @@ to make the initial slab check ineffective. In these cases, AABO can fall back o
 bool Intersects(AABBs world, AABB query)
 {
   if(objects+query are small and/or SIMD is low)
-    return IntersectSlabs(world, query);
+    return SlabIntersect(world, query);
   else
-    return IntersectSlabs(world, query); // tough luck!
+    return SlabIntersect(world, query); // tough luck!
 }
 
 bool Intersects(Octahedra world, Octahedron query)
 {
   if(objects+query are small and/or SIMD is low)
-    return IntersectSlabs(world, query);
+    return SlabIntersect(world, query);
   else
-    return IntersectTetrahedra(world, query);
+    return TetrahedronIntersect(world, query);
 }
 ```
 AABB can not choose an alternate strategy for when the initial slab check isn't worth doing. 
