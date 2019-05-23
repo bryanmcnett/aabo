@@ -281,7 +281,7 @@ to make the initial interval check ineffective. In these cases, AABO can fall ba
 ```
 bool Intersects(AABBs world, AABB query)
 {
-  if(IntervalCheckIsGoodIdea())
+  if(IntervalCheckIsSmart())
     return IntervalIntersect(world, query);
   else
     return IntervalIntersect(world, query); // oh no
@@ -289,7 +289,7 @@ bool Intersects(AABBs world, AABB query)
 
 bool Intersects(Octahedra world, Octahedron query)
 {
-  if(IntervalCheckIsGoodIdea())
+  if(IntervalCheckIsSmart())
     return IntervalIntersect(world, query);
   else
     return TetrahedronIntersect(world, query); // nice
