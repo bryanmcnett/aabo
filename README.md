@@ -224,6 +224,8 @@ int Intersects(AABBs world, int index, AABB query)
     return 0; // can avoid reading all but first 2 data 
   mask &= all_lessequal(world.minY[index], query.maxY)
   mask &= all_lessequal(query.minY, world.maxY[index])
+  if(mask == 0)
+    return 0; // can avoid reading all but first 4 data  
   mask &= all_lessequal(world.minZ[index], query.maxZ)
   mask &= all_lessequal(query.minZ, world.maxZ[index]);
   return mask;
@@ -248,12 +250,19 @@ int Intersects(Octahedra world, int index, Octahedron query)
     return 0; // can avoid reading all but first 2 data
   mask &= all_lessequal(world.minB[index], query.maxB) 
   mask &= all_lessequal(query.minB, world.maxB[index])
+  if(mask == 0)
+    return 0; // can avoid reading all but first 4 data
   mask &= all_lessequal(world.minC[index], query.maxC)
   mask &= all_lessequal(query.minC, world.maxC[index]);
+  if(mask == 0)
+    return 0; // can avoid reading all but first 6 data  
+  mask &= all_lessequal(world.minD[index], query.maxD)
+  mask &= all_lessequal(query.minD, world.maxD[index]);
   return mask;
 }
 ```
-Because we didn't account for the unlikely case that D planes need testing, this is a rhombohedron test and not an octahedron test. An AABB test is a special case of a rhombohedron test, where the axes ABC = {X, Y, Z}.
+The first six planes generate identical code in AABB and AABO. In either case the shape enclosed by the six planes is a rhombohedron.
+It is quite unlikely that the AABO test will actually perform the D plane test.
 
 <img src="https://raw.githubusercontent.com/bryanmcnett/aabo/master/images/rhombohedron.png" width="256" height="170" title="rhombohedron">
 
