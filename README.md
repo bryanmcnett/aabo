@@ -100,10 +100,10 @@ If you don't have a DownTriangle handy, you can find the smallest DownTriangle t
 ```
 DownTriangle GetCircumscribed(UpTriangle up)
 {
-  DownTriangle down;
-  down.maxA = -(up.minB + up.minC);
-  down.maxB = -(up.minA + up.minC);
-  down.maxC = -(up.minA + up.minB);
+  DownTriangle circumscribed;
+  circumscribed.maxA = -(up.minB + up.minC);
+  circumscribed.maxB = -(up.minA + up.minC);
+  circumscribed.maxC = -(up.minA + up.minB);
   return down;
 }
 ```
@@ -111,12 +111,12 @@ And should you need the largest DownTriangle enclosed by an UpTriangle...
 ```
 DownTriangle GetInscribed(UpTriangle up)
 {
-  DownTriangle circumscribe = Circumscribe(up);
-  DownTriangle down;
-  down.maxA = (up.minA + circumscribe.minA) * 0.5;
-  down.maxB = (up.minB + circumscribe.minB) * 0.5;
-  down.maxC = (up.minC + circumscribe.minC) * 0.5;
-  return down;
+  DownTriangle circumscribed = GetCircumscribed(up);
+  DownTriangle inscribed;
+  inscribed.maxA = (up.minA + circumscribed.maxA) * 0.5;
+  inscribed.maxB = (up.minB + circumscribed.maxB) * 0.5;
+  inscribed.maxC = (up.minC + circumscribed.maxC) * 0.5;
+  return inscribed;
 }
 ```
 We can layer on another set of triangles to get even tighter bounds than AABB, while remaining faster than AABB.
