@@ -265,10 +265,10 @@ When target platform has high degree of SIMD, initial interval check is bad
 ---------------------------------------------------------------------------
 
 An initial interval check is not effective when the degree of SIMD in the target platform is high. This is because, if just one
-lane intersects the slab, it is not possible to avoid reading more planes. 
+lane intersects the slab, we can't take the branch to avoid reading in more data. 
 
 On platforms such as GCN there are 64 SIMD lanes. For all of them to report no intersection with a slab 4% likely to intersect, 
-the probability is pow(0.96,64) or 0.073. That means for AABB an average of 5.7 plane tests, more than the AABO's initial 
+the probability is 0.96<sup>64</sup> or 0.073. That means for AABB an average of 5.7 plane tests, more than the AABO's initial 
 tetrahedron test with 4 planes total.
 
 Problems with initial interval check are worse in combination, but that's OK for AABO
