@@ -96,7 +96,17 @@ bool Intersects(Triangles world, int index, DownTriangle query)
   return Intersects(world.up[index], query);
 }
 ```
-
+If you don't have a DownTriangle handy, you can find the smallest DownTriangle that encloses any Uptriangle, like so:
+```
+DownTriangle GetEnclosure(UpTriangle up)
+{
+  DownTriangle down;
+  down.maxa = -(up.minB + up.minC);
+  down.maxb = -(up.minA + up.minC);
+  down.maxc = -(up.minA + up.minB);
+  return down;
+}
+```
 We can layer on another set of triangles to get even tighter bounds than AABB, while remaining faster than AABB.
 And, since the first layer remains, we can continue to do fast intersections with it alone when speed is most important.
 In addition to the up-pointing bounding triangle, we can have a down-pointing bounding triangle, and the intersection defines an axis-aligned bounding hexagon:
@@ -216,7 +226,11 @@ int Intersects(AABBs world, int index, AABB query)
       && all_lessequal(query.minZ, world.maxZ[index]);
 }
 ```
-The above "initial slab check" is a pretty good idea when objects and queries are small compared to the search space. AABO can do the same, and gets the same advantage as AABB when it does. We are not comparing opposing tetrahedra in this case, however - we're comparing opposing planes, just like AABB always does:
+The above code checks first if the object intersects the query in the interval {minX,maxX}, and only if an intersection is found,
+it proceeds to check Y and Z. This is often a pretty good idea, as most queries and objects are fairly small compared to the 
+world they inhabit, so the probability of one intersecting the other in any one-dimensional interval is pretty small.
+
+Whenever this initial interval check strategy is a good idea, we can do it with AABO as well:
 ```
 struct Octahedra
 {
@@ -233,26 +247,29 @@ int Intersects(Octahedra world, int index, Octahedron query)
       && all_lessequal(query.minC, world.maxC[index]);
 }
 ```
-You could continue to test the D planes, at very slightly higher cost, only if the initial bounding rhombohedron test passes. In
-the case of axes ABCD = {X, Y, Z, -(X+Y+Z)} the rhombohedron *is* an AABB, and the Octahedron slab test *is* an AABB test.
+Because we didn't test the D planes, this is a rhombohedron test and not an octahedron test, which would read two more values
+from memory, only when the rhombohedron test already passed. An AABB test is a special case of a rhombohedron test,
+where the axes ABC = {X, Y, Z}.
 
-When it is advantageous to initially test a slab in one dimension for intersection, AABB and AABO act identically, and
-produce identical code. But, it is not always advantageous to do the initial slab test!
+Unfortunately for AABB, this initial interval check strategy is not always a good idea.
 
-When object and query are big compared to world, initial slab check is bad
---------------------------------------------------------------------------
+When object or query are "not small" compared to world, initial interval check is bad
+-------------------------------------------------------------------------------------
 
-The slab test avoids doing 4 plane tests, so when it is 100% effective AABB is just as good as AABO. But, it is not effective
-when the probability of an object intersecting the slab is high. When it is 90% likely for an object to intersect the slab,
-then the slab test has only a 10% chance of avoiding 4 plane tests, which means on average 0.4 tests are avoided, for an average of
-5.6 plane tests per object. This is more expensive than an AABO's initial tetrahedron, with 4 plane tests.
+An initial interval check is not effective when the probability of an object intersecting the slab is high. When it is 80% likely 
+for an object to intersect the slab, then the test has only a 20% chance of avoiding the next four plane tests, which means for AABB on 
+average 0.8 tests are avoided, for an average of 5.2 plane tests per object. This is more expensive than an AABO's initial 
+tetrahedron test with 4 planes total.
 
 When target platform has high degree of SIMD, initial slab check is bad
 -----------------------------------------------------------------------
 
-The slab test can avoid doing 4 plane tests, only when all SIMD lanes report no slab intersection. On platforms such as GCN
-there are 64 SIMD lanes. For all of them to report no intersection with a slab 10% likely to intersect, the probability is
-pow(0.9,64) or 0.00117901845. That makes for an average of 5.99 plane tests, more than the AABO's initial tetrahedron test of 4.
+An initial interval check is not effective when the degree of SIMD in the target platform is high. This is because, if just one
+lane intersects the slab, it is not possible to avoid reading more planes. 
+
+On platforms such as GCN there are 64 SIMD lanes. For all of them to report no intersection with a slab 4% likely to intersect, 
+the probability is pow(0.96,64) or 0.07334304125. That means for AABB an average of 5.7 plane tests, more than the AABO's initial 
+tetrahedron test with 4 planes total.
 
 These two problems are worse in combination, but that's OK for AABO
 -------------------------------------------------------------------
@@ -262,7 +279,7 @@ to make the initial slab check ineffective. In these cases, AABO can fall back o
 ```
 bool Intersects(AABBs world, AABB query)
 {
-  if(objects+query are small and/or SIMD is low)
+  if(objects + query are "small" and/or SIMD is low)
     return SlabIntersect(world, query);
   else
     return SlabIntersect(world, query); // tough luck!
@@ -270,7 +287,7 @@ bool Intersects(AABBs world, AABB query)
 
 bool Intersects(Octahedra world, Octahedron query)
 {
-  if(objects+query are small and/or SIMD is low)
+  if(objects + query are "small" and/or SIMD is low)
     return SlabIntersect(world, query);
   else
     return TetrahedronIntersect(world, query);
