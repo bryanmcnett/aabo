@@ -277,7 +277,7 @@ Problems with initial interval check are worse in combination, but that's OK for
 -------------------------------------------------------------------------------------
 
 In cases where probability of slab intersection is a few percent, *and* degree of SIMD is 8 or more, their effects combine
-to make the initial slab check ineffective. In these cases, AABO can fall back on its initial tetrahedron check:
+to make the initial interval check ineffective. In these cases, AABO can fall back on its initial tetrahedron check:
 ```
 bool Intersects(AABBs world, AABB query)
 {
@@ -295,8 +295,8 @@ bool Intersects(Octahedra world, Octahedron query)
     return TetrahedronIntersect(world, query); // nice
 }
 ```
-AABB can not choose an alternate strategy for when the initial slab check isn't worth doing. 
-And, AABO is never slower than AABB at doing an initial slab check.
+AABB can not choose an alternate strategy for when the initial interval check isn't worth doing. 
+And, AABO is never slower than AABB at doing an initial interval check.
 So, we can say that in SoA, AABO is never worse than AABB, and sometimes better.
 
 Comparison to k-DOP
