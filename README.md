@@ -263,8 +263,8 @@ for an object to intersect the slab, then the test has only a 20% chance of avoi
 average 0.8 tests are avoided, for an average of 5.2 plane tests per object. This is more expensive than an AABO's initial 
 tetrahedron test with 4 planes total.
 
-When target platform has high degree of SIMD, initial slab check is bad
------------------------------------------------------------------------
+When target platform has high degree of SIMD, initial interval check is bad
+---------------------------------------------------------------------------
 
 An initial interval check is not effective when the degree of SIMD in the target platform is high. This is because, if just one
 lane intersects the slab, it is not possible to avoid reading more planes. 
@@ -273,26 +273,26 @@ On platforms such as GCN there are 64 SIMD lanes. For all of them to report no i
 the probability is pow(0.96,64) or 0.073. That means for AABB an average of 5.7 plane tests, more than the AABO's initial 
 tetrahedron test with 4 planes total.
 
-These two problems are worse in combination, but that's OK for AABO
--------------------------------------------------------------------
+Problems with initial interval check are worse in combination, but that's OK for AABO
+-------------------------------------------------------------------------------------
 
 In cases where probability of slab intersection is a few percent, *and* degree of SIMD is 8 or more, their effects combine
 to make the initial slab check ineffective. In these cases, AABO can fall back on its initial tetrahedron check:
 ```
 bool Intersects(AABBs world, AABB query)
 {
-  if(objects + query are "small" and/or SIMD is low)
-    return SlabIntersect(world, query);
+  if(IntervalCheckIsGoodIdea())
+    return IntervalIntersect(world, query);
   else
-    return SlabIntersect(world, query); // tough luck!
+    return IntervalIntersect(world, query); // oh no
 }
 
 bool Intersects(Octahedra world, Octahedron query)
 {
-  if(objects + query are "small" and/or SIMD is low)
-    return SlabIntersect(world, query);
+  if(IntervalCheckIsGoodIdea())
+    return IntervalIntersect(world, query);
   else
-    return TetrahedronIntersect(world, query);
+    return TetrahedronIntersect(world, query); // nice
 }
 ```
 AABB can not choose an alternate strategy for when the initial slab check isn't worth doing. 
