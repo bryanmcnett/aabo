@@ -96,9 +96,9 @@ bool Intersects(Triangles world, int index, DownTriangle query)
   return Intersects(world.up[index], query);
 }
 ```
-If you don't have a DownTriangle handy, you can find the smallest DownTriangle that encloses any Uptriangle, like so:
+If you don't have a DownTriangle handy, you can find the smallest DownTriangle that encloses an Uptriangle, like so:
 ```
-DownTriangle Circumscribe(UpTriangle up)
+DownTriangle GetCircumscribed(UpTriangle up)
 {
   DownTriangle down;
   down.maxA = -(up.minB + up.minC);
@@ -106,7 +106,10 @@ DownTriangle Circumscribe(UpTriangle up)
   down.maxC = -(up.minA + up.minB);
   return down;
 }
-DownTriangle Inscribe(UpTriangle up)
+```
+And should you need the largest DownTriangle enclosed by an UpTriangle...
+```
+DownTriangle GetInscribed(UpTriangle up)
 {
   DownTriangle circumscribe = Circumscribe(up);
   DownTriangle down;
