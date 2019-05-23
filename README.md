@@ -251,6 +251,8 @@ Because we didn't test the D planes, this is a rhombohedron test and not an octa
 from memory, only when the rhombohedron test already passed. An AABB test is a special case of a rhombohedron test,
 where the axes ABC = {X, Y, Z}.
 
+![Rhombohedron](images/rhombohedron.png)
+
 Unfortunately for AABB, this initial interval check strategy is not always a good idea.
 
 When object or query are "not small" compared to world, initial interval check is bad
@@ -268,7 +270,7 @@ An initial interval check is not effective when the degree of SIMD in the target
 lane intersects the slab, it is not possible to avoid reading more planes. 
 
 On platforms such as GCN there are 64 SIMD lanes. For all of them to report no intersection with a slab 4% likely to intersect, 
-the probability is pow(0.96,64) or 0.07334304125. That means for AABB an average of 5.7 plane tests, more than the AABO's initial 
+the probability is pow(0.96,64) or 0.073. That means for AABB an average of 5.7 plane tests, more than the AABO's initial 
 tetrahedron test with 4 planes total.
 
 These two problems are worse in combination, but that's OK for AABO
