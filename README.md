@@ -251,7 +251,7 @@ Because we didn't test the D planes, this is a rhombohedron test and not an octa
 from memory, only when the rhombohedron test already passed. An AABB test is a special case of a rhombohedron test,
 where the axes ABC = {X, Y, Z}.
 
-![Rhombohedron](images/rhombohedron.png)
+<img src="https://github.com/bryanmcnett/aabo/images/rhombohedron.png" width="256" height="256" title="rhombohedron">
 
 Unfortunately for AABB, this initial interval check strategy is not always a good idea.
 
