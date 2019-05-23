@@ -247,11 +247,9 @@ int Intersects(Octahedra world, int index, Octahedron query)
       && all_lessequal(query.minC, world.maxC[index]);
 }
 ```
-Because we didn't test the D planes, this is a rhombohedron test and not an octahedron test, which would read two more values
-from memory, only when the rhombohedron test already passed. An AABB test is a special case of a rhombohedron test,
-where the axes ABC = {X, Y, Z}.
+Because we didn't account for the unlikely case that D planes need testing, this is a rhombohedron test and not an octahedron test. An AABB test is a special case of a rhombohedron test, where the axes ABC = {X, Y, Z}.
 
-<img src="https://raw.githubusercontent.com/bryanmcnett/aabo/master/images/rhombohedron.png" width="256" height="200" title="rhombohedron">
+<img src="https://raw.githubusercontent.com/bryanmcnett/aabo/master/images/rhombohedron.png" width="256" height="170" title="rhombohedron">
 
 Unfortunately for AABB, this initial interval check strategy is not always a good idea.
 
