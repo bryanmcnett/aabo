@@ -218,12 +218,15 @@ struct AABBs
 }:
 int Intersects(AABBs world, int index, AABB query)
 {
-  return all_lessequal(world.minX[index], query.maxX)
-      && all_lessequal(query.minX, world.maxX[index])
-      && all_lessequal(world.minY[index], query.maxY) // rarely executes
-      && all_lessequal(query.minY, world.maxY[index])
-      && all_lessequal(world.minZ[index], query.maxZ)
-      && all_lessequal(query.minZ, world.maxZ[index]);
+  int mask = all_lessequal(world.minX[index], query.maxX)
+           & all_lessequal(query.minX, world.maxX[index])
+  if(mask == 0)
+    return 0; // can avoid reading all but first 2 data 
+  mask &= all_lessequal(world.minY[index], query.maxY)
+  mask &= all_lessequal(query.minY, world.maxY[index])
+  mask &= all_lessequal(world.minZ[index], query.maxZ)
+  mask &= all_lessequal(query.minZ, world.maxZ[index]);
+  return mask;
 }
 ```
 The above code checks first if the object intersects the query in the interval {minX,maxX}, and only if an intersection is found,
@@ -239,12 +242,15 @@ struct Octahedra
 }:
 int Intersects(Octahedra world, int index, Octahedron query)
 {
-  return all_lessequal(world.minA[index], query.maxA)
-      && all_lessequal(query.minA, world.maxA[index])
-      && all_lessequal(world.minB[index], query.maxB) // rarely executes
-      && all_lessequal(query.minB, world.maxB[index])
-      && all_lessequal(world.minC[index], query.maxC)
-      && all_lessequal(query.minC, world.maxC[index]);
+  int mask = all_lessequal(world.minA[index], query.maxA)
+           & all_lessequal(query.minA, world.maxA[index]);
+  if(mask == 0)
+    return 0; // can avoid reading all but first 2 data
+  mask &= all_lessequal(world.minB[index], query.maxB) 
+  mask &= all_lessequal(query.minB, world.maxB[index])
+  mask &= all_lessequal(world.minC[index], query.maxC)
+  mask &= all_lessequal(query.minC, world.maxC[index]);
+  return mask;
 }
 ```
 Because we didn't account for the unlikely case that D planes need testing, this is a rhombohedron test and not an octahedron test. An AABB test is a special case of a rhombohedron test, where the axes ABC = {X, Y, Z}.
