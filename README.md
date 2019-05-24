@@ -100,11 +100,10 @@ If you don't have a DownTriangle handy, you can find the smallest DownTriangle t
 ```
 DownTriangle GetCircumscribed(UpTriangle up)
 {
-  DownTriangle circumscribed;
-  circumscribed.maxA = -(up.minB + up.minC);
-  circumscribed.maxB = -(up.minA + up.minC);
-  circumscribed.maxC = -(up.minA + up.minB);
-  return down;
+  return DownTriangle {
+  -(up.minB + up.minC),
+  -(up.minA + up.minC),
+  -(up.minA + up.minB), };
 }
 ```
 And should you need the largest DownTriangle enclosed by an UpTriangle...
