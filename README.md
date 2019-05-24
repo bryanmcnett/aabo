@@ -100,14 +100,16 @@ If you don't have a DownTriangle handy, you can find the smallest DownTriangle t
 ```
 DownTriangle UpTriangle::GetCircumscribed()
 {
-  return *this - UpTriangle(minA + minB + minC);
+  const float ABC = minA + minB + minC;
+  return DownTriangle{minA - ABC, minB - ABC, minC - ABC};
 }
 ```
 And should you need the largest DownTriangle enclosed by an UpTriangle...
 ```
 DownTriangle UpTriangle::GetInscribed()
 {
-  return (*this + GetCircumscribed()) * 0.5;
+  const DownTriangle down = GetCircumscribed();
+  return DownTriangle{(minA + down.minA)/2, (minB + down.minB)/2, (minC + down.minC)/2};
 }
 ```
 We can layer on another set of triangles to get even tighter bounds than AABB, while remaining faster than AABB.
