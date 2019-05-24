@@ -98,12 +98,9 @@ bool Intersects(Triangles world, int index, DownTriangle query)
 ```
 If you don't have a DownTriangle handy, you can find the smallest DownTriangle that encloses an Uptriangle, like so:
 ```
-DownTriangle GetCircumscribed(UpTriangle up)
+DownTriangle UpTriangle::GetCircumscribed()
 {
-  return DownTriangle {
-  -(up.minB + up.minC),
-  -(up.minA + up.minC),
-  -(up.minA + up.minB), };
+  return *this - UpTriangle(minA + minB + minC);
 }
 ```
 And should you need the largest DownTriangle enclosed by an UpTriangle...
