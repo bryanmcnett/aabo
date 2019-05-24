@@ -105,9 +105,9 @@ DownTriangle UpTriangle::GetCircumscribed()
 ```
 And should you need the largest DownTriangle enclosed by an UpTriangle...
 ```
-DownTriangle GetInscribed(UpTriangle up)
+DownTriangle UpTriangle::GetInscribed()
 {
-  return (up + GetCircumscribed(up)) * 0.5;
+  return (*this + GetCircumscribed()) * 0.5;
 }
 ```
 We can layer on another set of triangles to get even tighter bounds than AABB, while remaining faster than AABB.
