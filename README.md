@@ -111,12 +111,7 @@ And should you need the largest DownTriangle enclosed by an UpTriangle...
 ```
 DownTriangle GetInscribed(UpTriangle up)
 {
-  DownTriangle circumscribed = GetCircumscribed(up);
-  DownTriangle inscribed;
-  inscribed.maxA = (up.minA + circumscribed.maxA) * 0.5;
-  inscribed.maxB = (up.minB + circumscribed.maxB) * 0.5;
-  inscribed.maxC = (up.minC + circumscribed.maxC) * 0.5;
-  return inscribed;
+  return (up + GetCircumscribed(up)) * 0.5;
 }
 ```
 We can layer on another set of triangles to get even tighter bounds than AABB, while remaining faster than AABB.
