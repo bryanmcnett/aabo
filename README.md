@@ -108,8 +108,8 @@ And should you need the largest DownTriangle enclosed by an UpTriangle...
 ```
 DownTriangle UpTriangle::GetInscribed()
 {
-  const DownTriangle down = GetCircumscribed();
-  return DownTriangle{(minA + down.minA)/2, (minB + down.minB)/2, (minC + down.minC)/2};
+  const float ABC = (minA + minB + minC) * 0.5;
+  return DownTriangle{minA - ABC, minB - ABC, minC - ABC};
 }
 ```
 We can layer on another set of triangles to get even tighter bounds than AABB, while remaining faster than AABB.
